@@ -1,5 +1,6 @@
 ---
 title: 下载
+pageLayout: Download
 createTime: 2026/10/19 20:00:00
 ---
 
