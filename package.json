@@ -5,6 +5,7 @@
   "description": "ClassSoftwareHub 项目文档站 —— 网页端、桌面端与 Windows 7 兼容版",
   "license": "GPL-3.0-only",
   "type": "module",
+  "packageManager": "pnpm@10.18.0",
   "engines": {
     "node": "^20.6.0 || >=22.0.0"
   },
