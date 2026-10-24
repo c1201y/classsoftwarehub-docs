@@ -208,7 +208,7 @@ onUnmounted(() => document.removeEventListener('click', closeDropdowns))
         <p>请检查网络连接，或前往 GitHub Releases 手动下载。</p>
         <a class="retry-btn" :href="RELEASES_URL" target="_blank" rel="noopener noreferrer">前往 Releases</a>
         <button class="retry-btn" @click="load()">重新加载</button>
-      </div态>
+      </div>
     </div>
 
     <template v-else>
