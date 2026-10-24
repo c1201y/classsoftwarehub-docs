@@ -19,14 +19,15 @@ createTime: 2026/10/19 20:00:00
 
 ## 桌面端
 
-从 GitHub Releases 获取，两种形态任选：
+两个桌面版本各自独立发版，从各自的 GitHub Releases 获取：
 
-| 形态 | 文件 | 说明 |
-| --- | --- | --- |
-| 安装版 | `ClassSoftwareHub-Setup-win7-dv<版本>.exe` | 安装包，装「启动器 + `app\` 子目录」，带开始菜单 / 桌面快捷方式与卸载项 |
-| 便携版 | `ClassSoftwareHub-Portable-win7-dv<版本>.zip` | 解压即用，双击根目录的启动器运行，不写注册表 |
+| 版本 | 包 | 文件 | 说明 |
+| --- | --- | --- | --- |
+| 桌面版（Win10 / 11） | 安装版 | `ClassSoftwareHub-Setup-dv<版本>.exe` | 当前用户安装到 `%LOCALAPPDATA%\Programs\ClassSoftwareHub`，带开始菜单 / 桌面快捷方式与卸载项 |
+| Windows 7 兼容版 | 安装版 | `ClassSoftwareHub-Setup-win7-dv<版本>.exe` | 默认装入 `%LOCALAPPDATA%\Programs\ClassSoftwareHub-Win7` |
+| Windows 7 兼容版 | 便携版 | `ClassSoftwareHub-Portable-win7-dv<版本>.zip` | 解压即用，双击根目录的启动器运行，不写注册表 |
 
-每个安装包都附带同名 `.md5`，下载后请校验完整性。
+桌面版（Win10 / 11）只提供安装版；两个版本的安装目录与安装标识不同，可共存。每个安装包都附带同名 `.md5`，下载后请校验完整性。
 
 ## 版本通道
 
@@ -42,12 +43,13 @@ createTime: 2026/10/19 20:00:00
 | 版本 | 系统要求 |
 | --- | --- |
 | Windows 7 兼容版 | Windows 7 SP1 及以上（x64） |
-| WinUI 3 原版桌面端 | Windows 10 1809 及以上 |
+| WinUI 3 桌面版（Win10 / 11） | Windows 10 1809（build 17763）及以上（x64） |
 
 两版安装目录与安装标识不同，可在同一台机器上共存。
 
 ## 相关链接
 
 - 网页端 Releases：[github.com/c1201y/ClassSoftwareHub/releases](https://github.com/c1201y/ClassSoftwareHub/releases)
+- 桌面版（Win10 / 11）Releases：[github.com/c1201y/ClassSoftwareHub-Desktop/releases](https://github.com/c1201y/ClassSoftwareHub-Desktop/releases)
 - Windows 7 版 Releases：[github.com/c1201y/ClassSoftwareHub-windows7/releases](https://github.com/c1201y/ClassSoftwareHub-windows7/releases)
 - 问题反馈：[github.com/c1201y/ClassSoftwareHub/issues](https://github.com/c1201y/ClassSoftwareHub/issues)

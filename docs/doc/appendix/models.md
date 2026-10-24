@@ -12,21 +12,23 @@ createTime: 2026/10/19 20:00:00
 | 软件数据 | `软件数据/apps/*.json` | JSON 文件 |
 | 下载项 | `downloads[]` | JSON 数组元素 |
 | 分类 | `软件数据/categories.json` | JSON |
+| 平台 | `软件数据/platforms.json` | JSON |
 | 回声洞消息 | `回声洞/messages/message<N>.json` | JSON |
 | 提交草稿 | `submissions/*.json` | JSON（含 `_` 前缀审核字段） |
 | 忽略记录 | `软件数据/update-ignore.json` | JSON |
-| 桌面端 `SoftwareApp` | `src/Data/SoftwareApp.cs` | C# 记录 |
-| 桌面端 `DownloadCategory` | `src/Data/*.cs` | C# 记录 |
-| 桌面端 `DataIssue` | `src/Data/*.cs` | C# 记录 |
-| 桌面端 `MirrorInfo` | `src/Core/ContentStore.cs` | C# |
-| 桌面端 `UiText` | `src/Data/UiText.cs` | C# |
-| 桌面端 `ToolDef` | `src/Data/ToolDef.cs` | C# |
-| 桌面端 `SidebarModule` | `src/Data/SidebarModule.cs` | C# |
-| 桌面端 `AppSettings` | `src/Services/SettingsStore.cs` | C#，序列化为 `settings.json` |
-| 更新模型 | `src/Services/Updating/UpdateModels.cs` | C# 记录 |
-| 内容同步结果 | `src/Services/ContentUpdater.cs`、`GithubContentSync.cs` | C# 记录 |
+| 下载票据 | 后端状态存储 | 键值记录，15 分钟有效 |
+| 文件登记 | 后端状态存储 / OSS 对象 | 键值记录 + 对象元数据 |
+| 公告 | 后端状态存储 | 配对码 + 消息队列 |
+| 桌面端 `SoftwareApp` | `Data/SoftwareApp.cs` | C# 记录 |
+| 桌面端 `DownloadLinkKind` | `Data/DownloadLinkKind.cs` | C# 枚举 |
+| 桌面端 `DataIssue` | `Data/*.cs` | C# 记录 |
+| 桌面端 `ToolDef` | `Data/ToolDef.cs` | C# |
+| 桌面端 `SidebarModule` | `Data/SidebarModule.cs` | C# |
+| 桌面端 `AppSettings` | `Services/SettingsStore.cs` | C#，序列化为 `settings.json` |
+| 更新模型 | `Services/Updating/UpdateModels.cs` | C# 记录 |
+| 内容同步结果 | `Services/ContentUpdater.cs`、`GithubContentSync.cs` | C# 记录 |
 
-本项目**无数据库**，无 schema 迁移机制。
+项目**无关系型数据库**。后端使用 EdgeOne 提供的键值 / Blob 状态存储保存票据、登记与公告；软件数据仍以仓库 JSON 为唯一权威源。桌面端本地缓存为文件，无 schema 迁移机制。
 
 ## 软件数据模型
 
@@ -35,7 +37,7 @@ createTime: 2026/10/19 20:00:00
 | `id` | string | 是 | 唯一 ASCII 标识，英文小写、数字、短横线；URL 为 `#/download/<id>` |
 | `name` | string | 是 | 软件名称 |
 | `icon` | string | 否 | 图标图片 URL，正方形 256×256 建议 |
-| `category` | string | 是 | `system` / `schedule` / `teaching` / `other` |
+| `category` | string | 是 | `classroom` / `office` / `system` / `media` / `network` / `utility` |
 | `tagline` | string | 是 | 一句话简介 |
 | `description` | string | 是 | 详细介绍 |
 | `version` | string | 否 | 版本号 |
@@ -64,9 +66,18 @@ createTime: 2026/10/19 20:00:00
 
 | 字段 | 说明 |
 | --- | --- |
-| key | `system` / `schedule` / `teaching` / `other` |
-| `name` | 分类显示名 |
-| `icon` | 字体符号代码（形如 `\uE90F`） |
+| `key` | `classroom` / `office` / `system` / `media` / `network` / `utility` |
+| `name` | 分类显示名（教学课堂 / 办公通讯 / 系统工具 / 影音图像 / 网络工具 / 其他工具） |
+| `icon` | 字体符号代码（形如 `\uE954`） |
+
+## 平台模型
+
+| 字段 | 说明 |
+| --- | --- |
+| `key` | `windows` / `macos` / `linux` / `android` / `ios` / `web` |
+| `name` | 平台显示名 |
+| `versionRange` | 是否按版本范围筛选 |
+| `versions[]` | 版本项数组，每项含 `key` 与 `name` |
 
 ## 回声洞消息模型
 
@@ -93,6 +104,8 @@ createTime: 2026/10/19 20:00:00
 
 ## 桌面端模型清单
 
-`src/Data/` 下：`SoftwareApp`、`DownloadCategory`、`DataIssue`、`MirrorInfo`、`UiText`、`ToolDef`、`SidebarModule`、`DownloadLinkKind`、`NameRoster`、`PickNumberConfig`、`MessageConfig`、`AutoShutdown`、`ExperimentalFeature`、`Feedback`、`EasiNoteGuard`、`ProcessGuard`、`LegalDocs`、`SearchIndex`、`ClockPresets`、`ClockSettings`。
+**Win10（`ClassSoftwareHub-Desktop`）** `Data/` 下：`SoftwareApp`、`DownloadLinkKind`、`SearchIndex`、`ToolDef`、`SidebarModule`、`NameRoster`、`PickNumberConfig`、`AutoShutdown`、`ExperimentalFeature`、`Feedback`、`EasiNoteGuard`、`ProcessGuard`、`UiText`，以及 `Core/` 中的 `ClockSettings`、`ClockPresets`、`StableRank` 等。
 
-桌面端 `ContentStore` 的解析逻辑与网页端 `src/gallery/data/index.ts` 保持一致：逐文件容错解析 → 坏文件跳过并记 `DataIssue` → 必填 `id`/`name` 校验 → `id` 重复跳过 → 按 `sort` 排序 → 分类读取（坏了就从软件里现推）（`src/Core/ContentStore.cs:8-19`）。
+**Windows 7（`ClassSoftwareHub-windows7`）** `src/Data/` 下：`SoftwareApp`、`DownloadCategory`、`DataIssue`、`MirrorInfo`、`UiText`、`ToolDef`、`SidebarModule`、`DownloadLinkKind`、`NameRoster`、`PickNumberConfig`、`MessageConfig`、`AutoShutdown`、`ExperimentalFeature`、`Feedback`、`EasiNoteGuard`、`ProcessGuard`、`LegalDocs`、`SearchIndex`、`ClockPresets`、`ClockSettings`。
+
+两个桌面端 `ContentStore` 的解析逻辑与网页端 `src/gallery/data/index.ts` 保持一致：逐文件容错解析 → 坏文件跳过并记 `DataIssue` → 必填 `id`/`name` 校验 → `id` 重复跳过 → 按 `sort` 排序 → 分类读取（坏了就从软件里现推）。1.2.0 起上游删除的文件会同步删除本地缓存；仅当目录列表疑似被截断时保留，避免误删。

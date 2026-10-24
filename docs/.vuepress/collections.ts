@@ -3,13 +3,14 @@ import { defineCollection, defineCollections } from "vuepress-theme-plume";
 /**
  * 侧边栏约定（中英必须逐项对齐，只有文字不同）：
  * - doc 集合：`概览` → `使用文档` → `附录`
- * - 使用文档分组顺序：项目概述 → 网页端 → 桌面端 → Windows 7 版 → 管理 → 排障
+ * - 使用文档分组顺序：项目概述 → 网页端 → 桌面端（跨版本）→ Windows 10 版 → Windows 7 版 → 管理 → 排障
  * - 每个分组都带同名 icon，组内条目全部是二级，不再出现「半截分组」。
  */
 const SETTINGS_GROUPS = {
   intro: { zh: '项目概述', en: 'Overview', icon: 'material-symbols:info-outline-rounded' },
   web: { zh: '网页端', en: 'Web', icon: 'material-symbols:language-rounded' },
   desktop: { zh: '桌面端', en: 'Desktop', icon: 'material-symbols:desktop-windows-rounded' },
+  win10: { zh: 'Windows 10 版', en: 'Windows 10', icon: 'material-symbols:desktop-mac-rounded' },
   win7: { zh: 'Windows 7 版', en: 'Windows 7', icon: 'material-symbols:window-rounded' },
   admin: { zh: '管理员指南', en: 'Administration', icon: 'material-symbols:admin-panel-settings-rounded' },
   trouble: { zh: '故障排查', en: 'Troubleshooting', icon: 'material-symbols:troubleshoot-rounded' },
@@ -27,6 +28,7 @@ const Doc = defineCollection({
     { text: '使用文档', icon: 'ep:guide', prefix: 'guide', items: [
       { text: '网页端使用说明', link: 'web' },
       { text: '桌面端使用说明', link: 'desktop' },
+      { text: 'Windows 10 版本使用说明', link: 'win10' },
       { text: 'Windows 7 版本使用说明', link: 'win7' },
       { text: '管理员指南', link: 'admin' },
       { text: '常见问题', link: 'faq' },
@@ -61,7 +63,7 @@ const Dev = defineCollection({
     ] },
     { text: '各端开发', icon: 'lucide:layout-panel-left', items: [
       { text: '网页端开发说明', link: 'web' },
-      { text: '桌面端开发说明', link: 'desktop' },
+      { text: 'Windows 10 桌面端开发说明', link: 'desktop' },
       { text: 'Windows 7 兼容开发说明', link: 'win7' },
     ] },
     { text: '接口与数据', icon: 'lucide:database', items: [
@@ -86,7 +88,7 @@ const Faq = defineCollection({
   meta: { createTime: "long" },
 });
 
-// English
+// English（英文站目前只维护概览与网页端说明，侧边栏只列真实存在的页面）
 const EnDoc = defineCollection({
   type: "doc",
   dir: "doc",
@@ -97,51 +99,6 @@ const EnDoc = defineCollection({
     { text: 'Overview', icon: 'material-symbols:overview-outline-rounded', link: 'overview' },
     { text: 'User Guide', icon: 'ep:guide', prefix: 'guide', items: [
       { text: 'Web Client', link: 'web' },
-      { text: 'Desktop Client', link: 'desktop' },
-      { text: 'Windows 7 Build', link: 'win7' },
-      { text: 'Administration Guide', link: 'admin' },
-      { text: 'FAQ', link: 'faq' },
-      { text: 'Troubleshooting', link: 'troubleshooting' },
-    ] },
-    { text: 'Appendix', icon: 'material-symbols:list-alt-rounded', prefix: 'appendix', items: [
-      { text: 'API Reference', link: 'api' },
-      { text: 'Configuration Reference', link: 'config' },
-      { text: 'Data Models', link: 'models' },
-      { text: 'Scripts', link: 'scripts' },
-      { text: 'Glossary', link: 'glossary' },
-    ] },
-  ],
-});
-
-const EnDev = defineCollection({
-  type: "doc",
-  dir: "dev",
-  linkPrefix: "/dev",
-  title: "Development",
-  meta: { createTime: "long" },
-  sidebar: [
-    { text: 'Development Docs', icon: 'material-symbols:code-blocks-rounded', link: 'index' },
-    { text: 'Architecture & Stack', icon: 'material-symbols:architecture-rounded', items: [
-      { text: 'Architecture & Repositories', link: 'architecture' },
-      { text: 'Tech Stack & Directory Layout', link: 'stack' },
-      { text: 'Environment Requirements', link: 'requirements' },
-    ] },
-    { text: 'Build & Config', icon: 'lucide:hammer', items: [
-      { text: 'Build, Run & Test', link: 'build' },
-      { text: 'Configuration', link: 'config' },
-    ] },
-    { text: 'Per-Client Development', icon: 'lucide:layout-panel-left', items: [
-      { text: 'Web Development', link: 'web' },
-      { text: 'Desktop Development', link: 'desktop' },
-      { text: 'Windows 7 Compatibility', link: 'win7' },
-    ] },
-    { text: 'API & Data', icon: 'lucide:database', items: [
-      { text: 'API & Data Models', link: 'api' },
-    ] },
-    { text: 'Engineering', icon: 'lucide:hand-heart', items: [
-      { text: 'CI/CD & Release', link: 'cicd' },
-      { text: 'Security & Permissions', link: 'security' },
-      { text: 'Contribution Guide', link: 'contribute' },
     ] },
   ],
 });
@@ -158,4 +115,4 @@ const EnFaq = defineCollection({
 });
 
 export const zhcollections = defineCollections([Doc, Dev, Faq]);
-export const encollections = defineCollections([EnDoc, EnDev, EnFaq]);
+export const encollections = defineCollections([EnDoc, EnFaq]);

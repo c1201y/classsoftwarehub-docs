@@ -6,7 +6,7 @@ config:
     hero:
       name: ClassSoftwareHub
       text: 电教委员常用软件下载站
-      tagline: "面向教室电脑与电教设备管理场景：无广告、无捆绑、开源优先的软件收录与课堂工具集，覆盖网页端、桌面端与 Windows 7 兼容版。"
+      tagline: "面向教室电脑与电教设备管理场景：无广告、无捆绑、开源优先的软件收录与课堂工具集，覆盖网页端、Windows 10 桌面端与 Windows 7 兼容版。"
       image: /logo.png
       actions:
         - theme: brand
@@ -76,7 +76,7 @@ config:
     features:
       - title: 第一步：访问或安装
         icon: lucide:download
-        details: 直接打开网页端，或下载桌面端安装版 / 便携版。路径：/doc/guide/web
+        details: 直接打开网页端，或下载桌面端安装版（Windows 7 版另有便携包）。路径：/doc/guide/web
       - title: 第二步：完成引导
         icon: lucide:map
         details: 首次启动联网同步软件清单，随后即可浏览与下载。路径：/doc/guide/desktop

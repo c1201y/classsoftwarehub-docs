@@ -3,25 +3,32 @@ title: 接口与数据模型
 createTime: 2026/10/19 20:00:00
 ---
 
-> API 清单、请求响应示例、错误码、数据模型与迁移方式
+> 后端路由、请求响应示例、错误码、下载协议、数据模型与迁移方式
 
 ## API 清单
 
-### 提交服务
+后端仓库为 `c1201y/csh-api`，部署于腾讯 EdgeOne Pages，基址 `https://api.classsoftwarehub.cn`，主入口 `functions/api/[[default]].js`。完整路由表见[接口清单](../doc/appendix/api.md)。
 
-提交服务为自建 Cloudflare Worker（代号 `classhub`），源码不在仓库内（`AGENTS.md:77-79`）。
+### 公共路由
 
 | 路由 | 方法 | 请求 | 响应 | 说明 |
 | --- | --- | --- | --- | --- |
-| `/api/submit` | POST | 应用字段 JSON + `_` 前缀审核字段 | `{ success: true, message }` 或 `{ error }` | 提交软件草稿，Worker 写入 `submissions/<id>.json` |
-| `/api/echocave` | POST | `{ "text": "…" }`（≤ 200 字符） | 同上 | 回声洞投稿，写入 `submissions/echo-<时间戳>-<随机>.json` |
-| `/api/feedback` | POST | 反馈表单 + age 密文联系方式 | 同上，可能带回 `url`（议题地址） | 反馈中心；Worker 拒绝明文 `contact`（400，检查 `-----BEGIN AGE ENCRYPTED FILE-----` 前缀） |
-| `/api/oss-sign` | POST | `{ name, size, contentType, purpose, fp }` | 预签名 PUT 地址 | 换取「只能写这一个对象、约一小时后过期」的预签名地址 |
-| `/api/dl-ticket` | POST | `{ key, 设备指纹 }` | 15 分钟票据 | 每台设备每天默认 80 次额度 |
-| `/api/dl` | GET | 票据 | 流式文件 | 服务端带中继令牌取流后原样转发 |
-| `/api/icon` | GET | 对象键 | 图片 | 公开只读 |
-| `/api/hit` | POST | 页面键 | — | 访问统计上报（网页端） |
-| `/api/stats` | GET | — | 统计数据 | 只读，本地开发用 |
+| `/api/status` | GET | — | 健康检查 JSON | 存储、OSS、GitHub API、中继、下载模式 |
+| `/api/submit` | POST | 应用字段 + `_` 前缀审核字段 | `{ success: true, message }` 或 `{ error }` | 写入 `submissions/<id>.json` |
+| `/api/echocave` | POST | `{ "text": "…" }` | 同上 | 写入 `submissions/echo-<时间戳>-<随机>.json` |
+| `/api/feedback` | POST | 反馈表单 + age 密文联系方式 | 同上，可能带回 `url` | 拒绝明文 `contact` |
+| `/api/oss-sign` | POST | `{ name, size, contentType, purpose, fp }` | 预签名 PUT 地址 | 只能写指定对象，短时有效 |
+| `/api/mirror-sign` | GET | `u=<GitHub URL>` | `{ url }` 短时签名链接 | 自建加速 |
+| `/api/dl-ticket` | POST | `{ key, 设备指纹 }` | 15 分钟票据 | 每设备每日默认 25 次 |
+| `/api/dl` | GET / HEAD | 票据 | 文件流（支持 Range） | 按模式走中继 / 直连 |
+| `/api/icon` | GET / HEAD | 对象键 | 图片 | 公开只读 |
+| `/api/announce/send` | POST | `{ pairCode, text, from, duration, targets? }` | `{ ok, id, devices }` | 配对码 6 位 |
+| `/api/announce/poll` | GET | `deviceId` + `pairCode` | 公告或 204 | 设备轮询 |
+| `/api/announce/list` | GET | `pairCode` | 设备列表 | 管理端查看 |
+
+### 管理路由（`X-Purge-Token`）
+
+`/api/purge`、`/api/files`、`/api/dl-stats`、`/api/link`、`/api/promote`、`/api/gc`、`/api/registry-sync`、`/api/dl-mode`、`/api/oss-check`。无令牌一律 401。
 
 ### 请求示例（提交软件，节选）
 
@@ -50,53 +57,66 @@ createTime: 2026/10/19 20:00:00
 
 ## OSS 直传协议
 
-网页端 `src/gallery/ossUpload.ts` 与桌面端 `src/Services/OssUpload.cs` 实现**完全同一套协议**：
+网页端 `src/gallery/ossUpload.ts` 与两个桌面端实现**同一套协议**：
 
 1. 客户端把 `{ name, size, contentType, purpose, fp }` 发给 `/api/oss-sign`，换回预签名 PUT 地址。
 2. 客户端自己 PUT 到 OSS。
 3. 回填的是**对象键**而非公开直链（桶是私有的，直链谁打开都是 403）。
 
-两种 `purpose` 落两个前缀、走两条读取路径：
-
 | purpose | 前缀 | 读取路径 |
 | --- | --- | --- |
-| `File` | `upload/…` | 私有，下载要过 `/api/dl` 的短时票据闸门 |
-| `Icon` | `icon/…` | 小图，走 `/api/icon` 公开只读 |
+| `icon` | `icon/…` | 小图（≤ 1 MB），走 `/api/icon` 公开只读 |
+| 其他或缺省 | `upload/…`（由 `OSS_PREFIX` 决定） | 私有，下载要过 `/api/dl` 的短时票据闸门 |
 
 ::: warning Content-Type 必须一致
-`Content-Type` 必须原样照抄签名接口回传的值：预签名地址把「请求形状」锁死了，`Content-Type` 是签名的一部分，发的值和签的值对不上会被 OSS 打回 403 `SignatureDoesNotMatch`。
+`Content-Type` 是签名的一部分。发的值必须与签名接口回传的值一致，否则 OSS 返回 403 `SignatureDoesNotMatch`。
 :::
 
-单文件上限 2.5 GB（与网页端一致；天花板是 OSS 单次 PUT 的 5 GB，再大必须分片）。改 `OssUpload.MaxBytes` 要同时改 Worker 的 `OSS_MAX_BYTES`，不能反着来（`src/Services/OssUpload.cs:74-80`）。
+单文件上限 2.5 GB（`OSS_MAX_BYTES`）。修改客户端上限时必须同时修改后端常量。
 
 ## OSS 下载协议
 
-`src/gallery/ossDownload.ts`：
+1. 客户端把 `{ key, 设备指纹 }` 发给 `/api/dl-ticket`。
+2. 后端检查对象前缀（`upload/`、`soft/`、`releases/`）、登记状态与设备今日额度（默认 25 次/天），发一张约 15 分钟票据。
+3. 客户端用票据请求 `/api/dl`，后端按下载模式取流：
 
-1. 前端把 `{ key, 设备指纹 }` 发给 `/api/dl-ticket`。
-2. 服务端查该设备今日剩余额度（默认 80 次/天），发一张 15 分钟票据。
-3. 前端用票据请求 `/api/dl`，服务端带中继令牌取流后原样转发。
+| 模式 | 路径 |
+| --- | --- |
+| `auto` | 优先 ECS 中继，失败回退后端直连 OSS |
+| `relay` | 固定 ECS 中继 |
+| `backend` | EdgeOne 函数直连 OSS |
+| `direct` | 票据直接指向 OSS 公网签名地址 |
 
-数据中用 `oss://对象键` 伪协议表示本站对象。该设计的原因是：地址直接写死进数据等于给每个软件配一条永久有效直链，被人挂到别处就是持续的流量账单；票据 15 分钟过期，转发出去基本来不及用（`src/gallery/ossDownload.ts:3-14`）。
+数据中用 `oss://对象键` 伪协议表示本站对象。票据短时有效，避免永久直链被转发后产生持续流量账单。
+
+## 加速签名协议
+
+1. 客户端带 GitHub 原始地址请求 `/api/mirror-sign`。
+2. 后端校验主机与路径，调用签名节点，返回 `https://download.classsoftwarehub.cn/d?u=&e=&s=`。
+3. nginx 校验签名、有效期与 Referer 白名单后反代 GitHub。
+4. 签名失败时客户端按公共镜像列表回退。
+
+限额：`SIGN_PER_IP_PER_DAY`（默认 20）、`SIGN_GLOBAL_PER_DAY`（默认 3000）。
 
 ## 错误码
 
-### OSS 下载错误码
+### 下载 / 票据
 
 | 码 | 含义 |
 | --- | --- |
-| `unreachable` | 所有提交入口都连不上 |
+| `unreachable` | 后端或中继不可达 |
 | `quota` | 今日下载额度用尽 |
-| `refused` | 服务端明确拒绝（key 非法 / 服务未配置） |
+| `refused` | 后端明确拒绝（key 非法 / 服务未配置 / 未登记） |
 | `invalid` | 响应形状不对 |
+| `expired` | 票据过期 |
 
-### OSS 上传错误码
+### OSS 上传
 
 | 码 | 含义 |
 | --- | --- |
-| `TooLarge` | 本地预检：超过 `MaxBytes` |
-| `SignFailed` | 签名接口明确拒绝（服务未配置 / 该用途被关掉） |
-| `Unreachable` | 签名接口连不上，或回的不是提交服务的响应 |
+| `TooLarge` | 本地预检：超过 2.5 GB |
+| `SignFailed` | 签名接口拒绝（服务未配置 / 用途关闭） |
+| `Unreachable` | 签名接口不可达 |
 | `Network` | 传输中断 |
 | `Aborted` | 用户取消 |
 | `Http` | OSS 拒绝（403 / 400 等） |
@@ -105,12 +125,12 @@ createTime: 2026/10/19 20:00:00
 
 | 异常 | 触发条件 |
 | --- | --- |
-| `ChecksumMismatchException` | 下载包校验不通过；携带算法、期望值、实际值、处置建议 |
+| `ChecksumMismatchException` | 下载包校验不通过；携带算法、期望值、实际值与处置建议 |
 | `MissingChecksumException` | 发布未提供任何可用校验值；中止更新，绝不执行未校验的安装包 |
 
-### 提交服务响应约定
+### 后端响应约定
 
-成功回 `success: true`，校验失败回 `error`。回源还没生效时 nginx 会吐 HTML 错误页，那不是接口响应，客户端据此换下一个入口，并记「信息」不记「警告」（这是期望内的回退）（`src/Services/SubmitClient.cs:58-64`）。
+成功回 `success: true` 或 `{ ok: true }`，失败回 `{ error }` 并附合适的 HTTP 状态码。管理接口未授权返回 401；额度超限返回 429；明确拒绝返回 403。客户端据此展示可读提示，不暴露堆栈。
 
 ## 数据模型
 
@@ -123,7 +143,7 @@ createTime: 2026/10/19 20:00:00
 | `id` | string | 是 | 唯一 ASCII 标识，英文小写、数字、短横线；URL 为 `#/download/<id>` |
 | `name` | string | 是 | 软件名称 |
 | `icon` | string | 否 | 图标图片 URL，正方形 256×256 建议 |
-| `category` | string | 是 | `system` / `schedule` / `teaching` / `other` |
+| `category` | string | 是 | `classroom` / `office` / `system` / `media` / `network` / `utility` |
 | `tagline` | string | 是 | 一句话简介 |
 | `description` | string | 是 | 详细介绍 |
 | `version` | string | 否 | 版本号 |
@@ -148,15 +168,9 @@ createTime: 2026/10/19 20:00:00
 | `size` | string | 否 | 体积；无直链时可写 `网页` |
 | `hash` | string | 否 | 十六进制校验值，算法按长度自动识别 |
 
-### 分类模型
+### 分类与平台
 
-`软件数据/categories.json`：
-
-| 字段 | 说明 |
-| --- | --- |
-| key | `system` / `schedule` / `teaching` / `other` |
-| `name` | 分类显示名 |
-| `icon` | 字体符号代码（形如 `\uE90F`） |
+分类 key：`classroom` / `office` / `system` / `media` / `network` / `utility`。平台 key：`windows` / `macos` / `linux` / `android` / `ios` / `web`，每个平台可带 `versionRange` 与 `versions[]`。
 
 ### 回声洞消息模型
 
@@ -168,14 +182,26 @@ createTime: 2026/10/19 20:00:00
 }
 ```
 
-`N` 为当前最大 `message(\d+)` + 1，2 空格缩进。不匹配 `message<数字>.json` 的文件仍会被渲染但排序靠后（`AGENTS.md:350-356`）。
+`N` 为当前最大 `message(\d+)` + 1，2 空格缩进。不匹配 `message<数字>.json` 的文件仍会被渲染但排序靠后。
+
+### 后端状态模型
+
+| 模型 | 关键字段 |
+| --- | --- |
+| 下载票据 | 对象键、设备指纹、签发时间、过期时间、使用次数 |
+| 文件登记 | 对象键、大小、来源（投稿 / 发布 / 图标）、创建时间 |
+| 公告 | 配对码、消息 ID、正文、发送者、时长、目标设备、时间戳 |
+| 设备 | 设备 ID、配对码、名称、最近轮询时间 |
+| 配置覆盖 | 下载模式、GC 阈值、投稿限额、更新时间 |
 
 ### 桌面端数据模型
 
-`src/Data/` 下：`SoftwareApp`、`DownloadCategory`、`DataIssue`、`MirrorInfo`、`UiText`、`ToolDef`、`SidebarModule`、`DownloadLinkKind`、`NameRoster`、`PickNumberConfig`、`MessageConfig`、`AutoShutdown`、`ExperimentalFeature`、`Feedback`、`EasiNoteGuard`、`ProcessGuard`、`LegalDocs`、`SearchIndex`、`ClockPresets`、`ClockSettings`。
+**Win10**：`Data/` 下 `SoftwareApp`、`DownloadLinkKind`、`SearchIndex`、`ToolDef`、`SidebarModule`、`NameRoster`、`PickNumberConfig`、`AutoShutdown`、`ExperimentalFeature`、`Feedback`、`EasiNoteGuard`、`ProcessGuard`、`UiText` 等。
 
-桌面端 `ContentStore` 的解析逻辑与网页端 `src/gallery/data/index.ts` 保持一致：逐文件容错解析 → 坏文件跳过并记 `DataIssue` → 必填 `id`/`name` 校验 → `id` 重复跳过 → 按 `sort` 排序 → 分类读取（坏了就从软件里现推）（`src/Core/ContentStore.cs:8-19`）。
+**Win7**：`src/Data/` 下同名模型，另有 `DownloadCategory`、`DataIssue`、`MirrorInfo`、`MessageConfig`、`LegalDocs`、`ClockPresets`、`ClockSettings`。
+
+两个桌面端 `ContentStore` 的解析逻辑与网页端 `src/gallery/data/index.ts` 一致：逐文件容错解析 → 坏文件跳过并记 `DataIssue` → 必填 `id`/`name` 校验 → `id` 重复跳过 → 按 `sort` 排序 → 分类读取（坏了就从软件里现推）。
 
 ## 数据库与迁移
 
-本项目**无数据库**。全部数据为 JSON 文件，随 git 版本控制。「迁移」通过编辑 JSON 文件并提交完成。桌面端的「数据同步」是从 GitHub 仓库拉取 JSON 到本地缓存目录，不涉及 schema 迁移。
+项目**无关系型数据库**。软件数据为 JSON 文件并随 git 版本控制；后端票据、登记、公告与配置覆盖写入 EdgeOne 状态存储；文件写入 OSS。桌面端「数据同步」只是把 JSON 拉到本地缓存目录，不涉及 schema 迁移。

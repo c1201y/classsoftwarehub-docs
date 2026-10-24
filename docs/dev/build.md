@@ -18,6 +18,48 @@ npm run check         # type-check + build
 
 脚本定义见 `package.json:8-16`。开发服务器配置（host `0.0.0.0`、port 5173、轮询监视）见 `vite.config.ts:19-30`；Windows 上改用轮询是为规避 node fs watcher 在文件被原子替换时抛 EBUSY 导致 dev server 崩溃的问题。
 
+## 桌面端（Win10）
+
+### 调试构建
+
+```powershell
+dotnet build ClassSoftwareHub.Desktop.csproj -c Debug
+.\bin\Debug\net10.0-windows10.0.26100.0\win-x64\ClassSoftwareHub.exe
+```
+
+### 打安装包
+
+```powershell
+# 1. 自包含发布到 dist\app
+dotnet publish ClassSoftwareHub.Desktop.csproj -c Release -r win-x64 -p:Platform=x64 `
+  --self-contained true -p:PublishTrimmed=false -o dist\app
+
+# 2. 编译安装脚本
+& "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" installer\ClassSoftwareHub.iss
+```
+
+产物为 `dist\installer\ClassSoftwareHub-Setup-dv<DesktopVersion>.exe`。版本号默认取 `.iss` 中的 `DesktopVersion`，可临时用 `/DDesktopVersion=...` 覆盖。
+
+::: danger 版本号四处一致
+发版前 `Core/ShellConfig.cs` 的 `ShellVersion`、`.csproj` 的 `Version` / `InformationalVersion`、`.iss` 的 `DesktopVersion`、git tag 必须一致（tag 带 `dv` 前缀，`.iss` 不带）。任何一处不一致，更新器都认不出新版本。
+:::
+
+::: warning 不要带内置内容
+`dotnet publish -o dist\app` 是覆盖式写入、不清理目录。发布前请确认 `dist\app\content` 不存在；工程里的 `VerifyNoBundledContent` 会在检测到内容包时直接让 publish 失败。
+:::
+
+## 后端（csh-api）
+
+后端无本地构建产物，修改 `functions/` 后部署到 EdgeOne Pages：
+
+```bash
+# 本地冒烟（需要 Node.js；会请求线上接口）
+node smoke.mjs
+node smoke-blob.mjs
+```
+
+部署后先访问 `https://api.classsoftwarehub.cn/` 或 `GET /api/status`，确认状态存储、OSS、GitHub API、中继与下载模式的检查项均为通过。环境变量在 EdgeOne 控制台配置，**不要写进仓库**。
+
 ## Windows 7 兼容版
 
 ### 调试构建
@@ -87,7 +129,9 @@ dotnet test tools\package-tests\package-tests.csproj
 
 ### 手工验收项
 
-1. 网页端：首页卡片渲染、详情页下载项按钮文案与行为、搜索面板三类结果、单文件构建可离线打开。
-2. 桌面端：首次启动联网同步、软件列表从空到有的刷新、各工具浮窗与侧边栏、截屏贴图全流程。
-3. Windows 7 版：`--simulate-win7` 分支下的渲染与背景降级、WebView2 缺失时的降级路径、静默更新全链路。
-4. 打包产物：便携版 zip 名含 `portable`；安装版文件名含 `Setup`；两层结构完整；`.md5` 已生成。
+1. 网页端：首页卡片渲染、详情页下载项按钮文案与行为、搜索面板结果、来源切换与签名刷新、单文件构建可离线打开。
+2. 桌面端（Win10）：首次启动联网同步、软件列表从空到有的刷新、各工具页与侧边栏、截屏贴图全流程、Hub AI 配置与工具调用。
+3. 桌面端（Win10）：安装、覆盖升级、回滚、卸载残留清理；WebView2 缺失时的降级路径。
+4. 后端：`/api/status` 全绿；投稿、直传签名、下载票据、加速签名、公告各走通一次；管理接口在无令牌时返回 401。
+5. Windows 7 版：`--simulate-win7` 分支下的渲染与背景降级、WebView2 缺失时的降级路径、静默更新全链路。
+6. 打包产物：Win7 便携版 zip 名含 `portable`；两个安装版文件名含 `Setup`；`.md5` 已生成；Win7 两层结构完整。

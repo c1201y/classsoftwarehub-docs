@@ -3,11 +3,11 @@ title: 配置说明
 createTime: 2026/10/19 20:00:00
 ---
 
-> 环境变量、配置文件、默认值、必填项、敏感项与示例
+> 环境变量、配置文件、默认值、必填项与敏感项
 
 ## 网页端
 
-网页端**无环境变量与运行时配置文件**，全部配置以源码常量形式存在：
+网页端**无运行时配置文件**，全部配置以源码常量形式存在：
 
 | 配置项 | 位置 | 说明 |
 | --- | --- | --- |
@@ -16,10 +16,12 @@ createTime: 2026/10/19 20:00:00
 | 致谢列表 | `鸣谢文本.ts` | 独立于 `文字设置.ts` |
 | AI 导航站点 | `AI导航文本.ts` | 名称 / 简介 / 网址 |
 | 软件数据 | `软件数据/apps/*.json` | 一软件一文件 |
-| 分类 | `软件数据/categories.json` | 4 个分类 |
-| 版本号 | `文字设置.ts` 的 `app.version`（3 处）、英文站 `Resources.ts` 的 `app.version`、`package.json` 的 `version` | 需同步修改 |
+| 分类 | `软件数据/categories.json` | 6 个分类 |
+| 平台 | `软件数据/platforms.json` | 6 个平台 |
+| 版本号 | `文字设置.ts` 的 `app.version`（3 处）、英文站 `Resources.ts`、`package.json` | 需同步修改 |
 | 加速下载镜像通道 | `src/gallery/githubMirror.ts` 的 `MIRROR_CHANNELS` | 增删镜像只改此处 |
-| 提交入口 | `src/gallery/submitEndpoints.ts` | 与桌面端 `ShellConfig.SubmitEndpoints` 对应 |
+| 加速签名入口 | `src/gallery/githubMirror.ts` 的 `SIGN_ENDPOINTS` | 首选 `https://api.classsoftwarehub.cn/api/mirror-sign` |
+| 后端入口 | `src/gallery/submitEndpoints.ts` | 当前仅 `https://api.classsoftwarehub.cn` |
 | 忽略名单 | `软件数据/update-ignore.json` | 由 `scripts/update-ignore.mjs` 维护 |
 
 ### 构建期环境变量
@@ -37,79 +39,99 @@ createTime: 2026/10/19 20:00:00
 | `GITHUB_TOKEN` | 工作流内置，自动注入 |
 
 ::: danger 凭据绝不入仓
-仓库是公开的，写入即公开，且进入 git 历史后无法撤回，只能更换凭据。所有凭据必须通过仓库 Secrets 注入，**不得明文写入仓库任何文件（含注释）**。
+仓库是公开的，写入即公开，且进入 git 历史后无法撤回，只能更换凭据。所有凭据必须通过仓库 Secrets 或平台环境变量注入，**不得明文写入仓库任何文件（含注释）**。
 :::
 
-### 本地开发用令牌
+## 后端（csh-api）
 
-| 变量 | 说明 |
+后端所有配置都来自 EdgeOne 环境变量，代码中的 `ENV_DEFAULTS` 只提供非敏感默认值。完整清单见[配置项清单](../doc/appendix/config.md#后端（csh-api-edgeone-pages）)。
+
+### 必填项
+
+| 变量 | 缺失后果 |
 | --- | --- |
-| `GITHUB_TOKEN` | 可选。不配置时走匿名接口，限流 60 次/小时 |
+| `GITHUB_TOKEN` | 回声洞、反馈、提交草稿写入不可用 |
+| `OSS_ACCESS_KEY_ID` / `OSS_ACCESS_KEY_SECRET` / `OSS_BUCKET` | 直传签名、下载票据不可用 |
+| `SIGN_API_KEY` | 自建 GitHub 加速签名不可用（`/api/mirror-sign` 返回未配置） |
+| `DL_SIGN_SECRET` | 下载票据使用空密钥签名，生产环境必须配置 |
+| `PURGE_TOKEN` | 所有管理接口返回 401 |
+| `RELAY_HOST` / `RELAY_TOKEN` | 下载中继不可用，只能走 backend / direct 模式 |
 
-## Windows 7 兼容版
+### 敏感项
 
-外壳常量集中在 `src/Core/ShellConfig.cs`，无外部配置文件，无环境变量（除 `CSH_SIMULATE_WIN7` 排障开关外）。用户设置持久化于 `%LOCALAPPDATA%\ClassSoftwareHub\settings.json`。
+`GITHUB_TOKEN`、`OSS_ACCESS_KEY_SECRET`、`SIGN_API_KEY`、`DL_SIGN_SECRET`、`RELAY_TOKEN`、`PURGE_TOKEN` 只能配置在平台环境变量中，不写入日志、不返回给客户端、不进入 git。
+
+### 运行时可调项
+
+下载模式、GC 阈值、投稿限额可通过 `POST /api/dl-mode` 写入状态存储，优先级高于环境变量；`GET /api/dl-mode` 会返回 `modeSource`（`runtime` / `env`）以便确认当前生效来源。
+
+## 桌面端（Win10）
+
+外壳常量集中在 `Core/ShellConfig.cs`，用户设置持久化于 `%LOCALAPPDATA%\ClassSoftwareHub\settings.json`，AI 密钥单独存于 `hubai-key.bin`（DPAPI 加密）。
 
 ### 核心常量
 
 | 常量 | 当前值 | 说明 |
 | --- | --- | --- |
-| `SiteUrl` | `https://classsoftwarehub.us.ci` | 站点地址；正式发版只改这一行 |
-| `ShellVersion` | `1.2.0-insider1.0` | 版本号唯一来源 |
+| `SiteUrl` | `https://classsoftwarehub.us.ci` | 站点地址 |
+| `ShellVersion` | `1.2.0-insider1.4` | 版本号唯一来源 |
 | `VersionPrefix` | `dv` | 版本号前缀 |
-| `UpdateRepoOwner` / `UpdateRepoName` | `c1201y` / `ClassSoftwareHub-windows7` | 更新仓库；Win7 版独立成库 |
-| `UpdateTagPrefix` | `""`（空串） | 独立仓库后留空；合库时填上前缀 |
-| `UpdateToken` | `""`（空） | 留空走匿名（60 次/小时）；⚠️ 永远不要写死在公开仓库里 |
+| `UpdateRepoOwner` / `UpdateRepoName` | `c1201y` / `ClassSoftwareHub-Desktop` | 更新仓库 |
 | `SiteRepoOwner` / `SiteRepoName` / `SiteRepoBranch` | `c1201y` / `ClassSoftwareHub` / `main` | 软件数据来源仓库 |
 | `SiteRepoDataDir` | `软件数据` | 仓库中软件数据目录 |
-| `SubmitEndpoints` | `https://cshapi.132614.xyz`、`https://submit.132614.xyz` | 提交服务入口，按顺序尝试 |
-| `SubmitTimeoutMs` | `10000` | 提交请求超时 |
-| `ContentManifestUrl` | `https://classsoftwarehub.us.ci/content/manifest.json` | 备用内容来源 |
-| `ContentManifestUrlFallback` | `https://pan.132614.xyz/dav/%E7%BD%91%E7%AB%99/content/manifest.json` | 网盘备用来源 |
+| `ContentManifestUrl` | 主站 `/content/manifest.json` | 备用内容来源 |
+| `BundledContentDir` | 无 | 1.2.0 起取消内置内容 |
 | `SiteVersionTarget` / `SiteVersionDisplay` | `v2.3.4` / `v2.3.4 - Tangram (20260927PR01)` | 与站点对齐的版本号 |
-| `LoadTimeoutSeconds` | `25` | 导航超时 |
-| `TitleBarHeight` | `48` | 标题栏高度 |
 | `MutexName` | `ClassSoftwareHub.Desktop.SingleInstance` | 单实例互斥名 |
 | `ActivateEventName` | `ClassSoftwareHub.Desktop.ActivateMainWindow` | 唤醒主窗口的命名事件 |
-| `WebView2DownloadUrl` | WebView2 官方下载页 | 运行时缺失时的引导地址 |
-| `DevContentDir` | 开发机站点工程产物目录 | 仅本机存在，正式用户机器自动跳过 |
 
-### 用户设置
+### 用户设置（节选）
 
-`src/Services/SettingsStore.cs` 的 `AppSettings`，节选关键项：
+| 设置项 | 默认值 | 说明 |
+| --- | --- | --- |
+| `Backdrop` | `mica` | `mica` / `acrylic` / `solid`，不可用时自动降级 |
+| `Theme` | `system` | `system` / `light` / `dark` |
+| `CloseToTray` | `true` | 点关闭收进托盘 |
+| `PaletteOnTop` | `true` | 工具浮窗置顶 |
+| `SidebarEnabled` | `true` | 启用工具侧边栏 |
+| `SidebarEdge` | `right` | 贴靠边 |
+| `SidebarMode` | `dock` | `dock` / `free` |
+| `SidebarModuleIds` | 抽号、计时、秒表、时钟 | 侧边栏模块与顺序 |
+| `HubAiEnabled` | `true` | 启用 Hub AI |
+| `HubAi.provider` | `deepseek` | AI 服务商 |
+| `HubAi.baseUrl` | `https://api.deepseek.com/v1` | 接口地址 |
+| `HubAi.model` | `deepseek-v4-flash` | 模型 |
+| `AutoCheckUpdate` | `true` | 启动时检查更新 |
+| `LogRetentionDays` | `7` | 日志保留天数 |
+| `TelemetryEnabled` | `false` | 遥测，默认关闭；当前为空操作 |
 
-| 设置项 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `Backdrop` | string | `acrylic` | `acrylic` / `mica` / `solid` |
-| `Theme` | string | `system` | `system` / `light` / `dark` |
-| `SplitTheme` | bool | `false` | 外部组件使用单独外观 |
-| `ExternalTheme` | string | `system` | 外部组件外观，仅 `SplitTheme` 开启时生效 |
-| `CloseToTray` | bool | `true` | 点关闭收进托盘而非退出 |
-| `AlwaysOnTop` | bool | `false` | 主窗口置顶 |
-| `AutoStart` | bool | `false` | 开机启动 |
-| `MinimizeOnStart` | bool | `false` | 开机启动时最小化 |
-| `TelemetryEnabled` | bool | `false` | 遥测上报，**默认关闭**；当前实现为空操作 |
-| `PaletteOnTop` | bool | `true` | 工具浮窗置顶 |
-| `SidebarEnabled` | bool | `true` | 屏幕右侧工具侧边栏 |
-| `SidebarMode` | string | `dock` | `dock`（贴靠，仅左右两边）/ `free`（自由，四条边） |
-| `SidebarEdge` | string | `right` | 贴靠模式的边 |
-| `SidebarFreeEdge` | string | `right` | 自由模式的边 |
-| `SidebarModuleIds` | string[] | `{ "pick-number", "timer", "stopwatch", "clock" }` | 侧边栏模块与顺序 |
+## 桌面端（Windows 7）
 
-## 提交服务（外部）
+外壳常量集中在 `src/Core/ShellConfig.cs`，用户设置同样写入 `%LOCALAPPDATA%\ClassSoftwareHub\settings.json`。
 
-提交服务为自建 Cloudflare Worker（代号 `classhub`），源码不在仓库内。客户端可见的路由与协议见[接口与数据模型](./api.md)。
-
-Worker 侧配置项（如 `OSS_MAX_BYTES`）待确认。
+| 常量 | 当前值 | 说明 |
+| --- | --- | --- |
+| `SiteUrl` | `https://classsoftwarehub.us.ci` | 站点地址 |
+| `ShellVersion` | `1.2.0-insider1.2` | 版本号唯一来源 |
+| `VersionPrefix` | `dv` | 版本号前缀 |
+| `UpdateRepoOwner` / `UpdateRepoName` | `c1201y` / `ClassSoftwareHub-windows7` | 更新仓库 |
+| `SiteRepoOwner` / `SiteRepoName` / `SiteRepoBranch` | `c1201y` / `ClassSoftwareHub` / `main` | 软件数据来源仓库 |
+| `SiteRepoDataDir` | `软件数据` | 仓库中软件数据目录 |
+| `SubmitEndpoints` | `https://cshapi.132614.xyz`、`https://submit.132614.xyz` | 历史入口；待切换到 `api.classsoftwarehub.cn` |
+| `SubmitTimeoutMs` | `10000` | 提交请求超时 |
+| `ContentManifestUrl` / `ContentManifestUrlFallback` | 主站 / 网盘 | 备用内容来源 |
+| `MutexName` | `ClassSoftwareHub.Desktop.SingleInstance` | 单实例互斥名 |
+| `ActivateEventName` | `ClassSoftwareHub.Desktop.ActivateMainWindow` | 唤醒主窗口的命名事件 |
+| `DevContentDir` | 开发机站点工程产物目录 | 仅本机存在 |
 
 ## 安装脚本
 
-| 配置 | 位置 | 值 |
+| 配置 | Win10 | Windows 7 |
 | --- | --- | --- |
-| 版本号 | `#define DesktopVersion` | 与 `ShellVersion` 一字不差（不带 `dv`） |
-| AppId | `[Setup] AppId` | `{{C4E7B2A1-6D38-4F5C-9A17-0E8B3D5C7F42}` |
-| 默认安装目录 | `DefaultDirName` | `{localappdata}\Programs\ClassSoftwareHub-Win7` |
-| 权限要求 | `PrivilegesRequired` | `lowest` |
-| 最低系统版本 | `MinVersion` | `6.1sp1` |
-| 允许架构 | `ArchitecturesAllowed` | `x64compatible` |
-| 压缩 | `Compression` | `lzma2/max` + `SolidCompression` |
+| 版本号 | `#define DesktopVersion` | `#define DesktopVersion` |
+| AppId | `{{7A2C4D18-9F31-4C6B-8E5A-2D0B7F4A1C93}` | `{{C4E7B2A1-6D38-4F5C-9A17-0E8B3D5C7F42}` |
+| 默认安装目录 | `{localappdata}\Programs\ClassSoftwareHub` | `{localappdata}\Programs\ClassSoftwareHub-Win7` |
+| 权限要求 | `lowest` | `lowest` |
+| 最低系统版本 | `6.1sp1` + `[Code]` 检查 17763 | `6.1sp1` |
+| 允许架构 | `x64compatible` | `x64compatible` |
+| 输出文件名 | `ClassSoftwareHub-Setup-dv<版本>.exe` | `ClassSoftwareHub-Setup-win7-dv<版本>.exe` |

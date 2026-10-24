@@ -3,7 +3,7 @@ title: 脚本清单
 createTime: 2026/10/19 20:00:00
 ---
 
-> 网页端维护脚本、Windows 7 兼容版工具脚本与 package.json 脚本
+> 网页端维护脚本、Win10 桌面端与 Windows 7 兼容版工具脚本、package.json 脚本
 
 ## 网页端 `scripts/`
 
@@ -16,6 +16,14 @@ createTime: 2026/10/19 20:00:00
 | `icon-sync.py` | Python | 图标本地化；`--apply` 下载转换，`--all` 全部远程图标，`--only a,b` 指定软件 |
 | `upload-webdav.py` | Python | OpenList WebDAV 上传；建目录 → PUT → 校验 → 清理 |
 | `gen-age-key.mjs` | Node.js | 生成 age 密钥对 |
+
+## 桌面端（Win10）`tools/`
+
+| 脚本 | 语言 | 用途 |
+| --- | --- | --- |
+| `publish-release.mjs` | Node.js | 发版；上传安装包与 `.md5`、创建 Release、按通道勾选 Pre-release |
+| `sync-legal.mjs` | Node.js | 从站点 `法律文本.ts` 生成安装器 `Legal.rtf` 与桌面端条款 |
+| `package-tests/` | C# | 打包相关测试工程 |
 
 ## Windows 7 兼容版 `tools/`
 

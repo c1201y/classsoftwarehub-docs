@@ -12,8 +12,8 @@ createTime: 2026/10/19 20:00:00
 | 网页端 | `ClassSoftwareHub` 仓库，Vue 3 + Vite + TypeScript 实现的纯静态站点，部署于 `https://classsoftwarehub.us.ci` |
 | 桌面端（WinUI 3 原版） | `ClassSoftwareHub-Desktop` 仓库，基于 WinUI 3 + .NET 10 + Windows App SDK 2.5 的桌面客户端，系统底线为 Windows 10 1809 |
 | Windows 7 兼容版 | `ClassSoftwareHub-windows7` 仓库（代号 `csh-win7`），以 Avalonia 11.2.8 + .NET 6 重写 UI 层的桌面客户端，系统底线为 Windows 7 SP1 |
+| 后端 | `csh-api` 仓库，部署于腾讯 EdgeOne Pages Functions，对外域名 `https://api.classsoftwarehub.cn`，承担提交、反馈、回声洞、签名、下载票据与公告 |
 | 软件数据 | 网页端 `软件数据/apps/*.json` 中逐软件维护的结构化记录，是网页端与桌面端共用的唯一数据源 |
-| 提交服务 | 自建 Cloudflare Worker（代号 `classhub`），提供 `/api/submit`、`/api/echocave`、`/api/feedback`、`/api/oss-sign`、`/api/dl-ticket`、`/api/dl` 等路由 |
 | 体检 Issue | 「软件信息体检 · 待人工确认」Issue，汇总脚本无法自动处理的软件条目 |
 | 回声洞 | 设置页中逐条显示群友投稿并逐字打出的互动组件 |
 | 覆盖已存在 | 审核标签之一，表示用本次提交整份替换站内已存在的同名软件数据 |
@@ -62,6 +62,11 @@ createTime: 2026/10/19 20:00:00
 | 版本只许前进 | 写回的版本必须来自实际分发的产物，且只在比站内更新时才覆盖；上游比站内旧就整条跳过 |
 | 本次跳过 | 仅压制当前这一版问题的处理方式；上游发布新版或直链更换后自动恢复提醒 |
 | 不用跟进 | 永久静音某个软件条目的处理方式 |
-| 加速下载 | 对 GitHub 文件链接提供的镜像通道跳转，官方链接与非 GitHub 主机不显示该按钮 |
-| 票据闸门 | OSS 私有桶的下载保护机制；凭 15 分钟短时票据取流，避免永久有效直链被转发滥用 |
+| 加速下载 | 对 GitHub 文件提供的加速通道：优先自建签名链接，失败回退公共镜像与原始地址 |
+| 自建加速 | `download.classsoftwarehub.cn`，nginx 校验短时签名与 Referer 白名单后反代 GitHub |
+| 下载票据 | OSS 私有桶的下载保护机制；凭约 15 分钟短时票据经 `/api/dl` 取流，避免永久直链被转发滥用 |
+| 直传签名 | 后端为浏览器 / 客户端生成的 OSS PUT 短时签名，避免 AccessKey 出现在前端 |
+| EdgeOne | 腾讯云边缘平台；本项目的后端函数、状态存储与状态面板部署在其上 |
+| 配对码 | 「教室喊话」的 6 位数字码；发送端与接收设备凭它关联，公告进入队列后由设备轮询取走 |
+| Hub AI | 桌面端内置的多服务商 AI 助手，支持工具调用，密钥以 DPAPI 加密存于本机 |
 | 审核字段 | 草稿中 `_` 前缀的键，仅用于审核，合并时全部剥除，不会发布到网站 |

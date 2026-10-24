@@ -25,6 +25,39 @@ createTime: 2026/10/19 20:00:00
 6. **`index.html` 必须用相对路径引用资源**（`vite.config.ts` 的 `base: './'`），以适配根目录与子目录两种形态（`AGENTS.md:496-501`）。
 7. **行结尾必须保持原样**：`check-updates.mjs` 逐个重写 JSON 文件以保留原始行结尾（`AGENTS.md:607`）。
 
+## 桌面端（Win10）发布
+
+Win10 仓库当前以本地脚本发版为主（仓库未包含自动发布工作流）：
+
+```powershell
+$env:GITHUB_TOKEN = "..."   # 需要仓库写权限，别写进任何文件
+node --use-system-ca tools\publish-release.mjs `
+  --tag dv1.2.0-insider1.4 --channel insider `
+  --installer "dist\installer\ClassSoftwareHub-Setup-dv1.2.0-insider1.4.exe" `
+  --image "dist\release\dv1.2.0.png" `
+  --name "ClassSoftwareHub dv1.2.0-insider1.4" --notes "dist\release\notes.md"
+```
+
+顺序：**先 push main → 再打 tag → 最后跑脚本发 Release**（tag 必须指向已推送的提交）。脚本会计算 MD5 / SHA256、生成同名 `.md5`、创建 Release，并上传安装包、校验值与配图。加 `--dry-run` 可只打印摘要与写 `.md5`，不碰 GitHub。
+
+| 产物 | 文件 |
+| --- | --- |
+| 安装版 | `ClassSoftwareHub-Setup-dv<版本>.exe` + `.md5` |
+| 配图 | Release 正文首行引用的 png（随 `--image` 上传） |
+
+tag 含 `insider` 时自动标为 Pre-release，仅预览版通道客户端能收到。
+
+## 后端（csh-api）部署
+
+后端通过 EdgeOne Pages 部署，无 GitHub Actions 构建步骤：
+
+1. 合并 `functions/` 变更到主分支。
+2. 在 EdgeOne 控制台触发部署（或由平台关联自动部署）。
+3. 部署后访问 `/api/status`，确认所有服务检查通过。
+4. 如需变更环境变量，先在控制台更新，再重新部署使新值生效。
+
+回滚：在 EdgeOne 控制台回退到上一个部署版本；状态存储中的票据 / 公告会自然过期，必要时用 `/api/gc` 清理。
+
 ## Windows 7 兼容版工作流
 
 `.github/workflows/win7-release.yml`：
@@ -76,9 +109,9 @@ node tools\publish-release-win7.mjs `
 - 需同步修改：`文字设置.ts` 的 `app.version`、`home.subtitle`、`welcome.intro`（3 处）；`src/gallery/Strings/en-US/Resources.ts` 的 `app.version`；`package.json` 的 `version`（裸 `2.3.4`，无代号 / 内部号）与 `package-lock.json` 顶部两个 `version` 字段。
 - Release tag 命名 `vX.Y.Z-<codename>`。
 
-### Windows 7 兼容版
+### 桌面端（Win10 / Win7 共用规则）
 
-`dv` + `主.功能.补丁` + `-insider架构.迭代`，唯一来源是 `ShellConfig.ShellVersion`：
+`dv` + `主.功能.补丁` + `-insider架构.迭代`，唯一来源分别是两仓库的 `ShellConfig.ShellVersion`：
 
 | 位 | 含义 |
 | --- | --- |
@@ -90,6 +123,8 @@ node tools\publish-release-win7.mjs `
 
 流程：做出一个能用的版本 → 发 `1.0.0-insider1.0` → 用户反馈还有问题 → 继续改成 `1.0.0-insider1.1` → 一直改到没问题 → 删掉 `-insider` 后缀 → 上线正式版 `1.0.0`。
 
+**Win10 版发版需四处一致**：`ShellVersion`、`.csproj` 的 `Version` / `InformationalVersion`、`.iss` 的 `DesktopVersion`、git tag（tag 带 `dv`，`.iss` 不带）。Win7 版三处一致：`ShellVersion`、`.iss` 的 `DesktopVersion`、git tag。
+
 ::: warning 基数不随便抬
 否则旧包会被强制顶掉。
 :::
@@ -100,5 +135,6 @@ node tools\publish-release-win7.mjs `
 | --- | --- |
 | 网页端数据 | git 提交历史回溯；`git show <父提交>:软件数据/apps/<id>.json` 找回任一历史版本 |
 | 网页端部署 | 重新推送历史提交触发 `deploy.yml`；或手动 `workflow_dispatch` |
+| 后端 | EdgeOne 控制台回退到上一个部署版本；环境变量改回旧值 |
 | 桌面端版本 | 客户端内置回滚：设置页查看历史版本列表，选择任意版本安装（不校验版本高低） |
-| 安装版覆盖安装 | 启动器 + `app\` 两层结构，安装旧版时替换 `app\` 子目录即可 |
+| 安装版覆盖安装 | Win7 版替换 `app\` 子目录；Win10 版原地覆盖安装 |

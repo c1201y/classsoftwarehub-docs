@@ -3,7 +3,7 @@ title: 环境要求
 createTime: 2026/10/19 20:00:00
 ---
 
-> Node.js、包管理器、运行时、数据库、系统依赖与 Windows 7 特殊依赖
+> Node.js、.NET SDK、Windows 平台组件、打包工具与后端运行环境
 
 ## 网页端
 
@@ -14,7 +14,21 @@ createTime: 2026/10/19 20:00:00
 | 构建工具 | Vite 8 | `package.json:33` |
 | 类型检查 | vue-tsc 3.2.6 + TypeScript ~6.0 | `package.json:31,34` |
 | Python | 运行 `scripts/icon-sync.py` 与 `scripts/upload-webdav.py` 需要 Python 3 + Pillow | `AGENTS.md:211-218` |
-| 后端 | 无 | `AGENTS.md:18` |
+| 后端 | 无需自建；开发时调用线上 `https://api.classsoftwarehub.cn` | `src/gallery/submitEndpoints.ts` |
+
+## 桌面端（Win10）
+
+| 项目 | 要求 | 依据 |
+| --- | --- | --- |
+| 系统 | Windows 10 1809 及以上（x64） | `installer/ClassSoftwareHub.iss` |
+| IDE | Visual Studio 2022 或更新，安装 .NET 桌面开发与 Windows App SDK 组件 | `BUILDING.md:7` |
+| .NET SDK | 10.0 | `ClassSoftwareHub.Desktop.csproj` |
+| 目标框架 | `net10.0-windows10.0.26100.0`，RID `win-x64` | `ClassSoftwareHub.Desktop.csproj` |
+| Windows App SDK | 2.5.1 | `ClassSoftwareHub.Desktop.csproj` |
+| 安装包 | Inno Setup 6（默认装在 `%LOCALAPPDATA%\Programs\Inno Setup 6\`） | `BUILDING.md:24-25` |
+| 发版脚本 | Node.js（运行 `tools/publish-release.mjs`） | `BUILDING.md:63-70` |
+| 目标机 .NET 运行时 | **不需要**。应用为自包含发布 | `BUILDING.md:21-22` |
+| 目标机 WebView2 运行时 | 可选；缺失时安装程序会引导安装 | `installer/ClassSoftwareHub.iss` |
 
 ## Windows 7 兼容版
 
@@ -41,15 +55,19 @@ createTime: 2026/10/19 20:00:00
 
 依据：`README.md:54-62`、`src/ClassSoftwareHub.Win7.csproj:3-15`。
 
-## 桌面端（WinUI 3 原版）
+## 后端（csh-api）
 
-| 项目 | 要求 | 依据 |
-| --- | --- | --- |
-| 系统 | Windows 10 1809 及以上 | `installer/ClassSoftwareHub-Win7.iss:16-17`、`src/PORTING.md:12` |
-| 技术栈 | .NET 10 + Windows App SDK 2.5 | `src/PORTING.md:12` |
-
-其余环境要求待确认（需 `ClassSoftwareHub-Desktop` 仓库）。
+| 项目 | 要求 |
+| --- | --- |
+| 运行环境 | 腾讯 EdgeOne Pages（Functions，V8 隔离环境） |
+| 语言 | JavaScript（ES Modules）；平台不提供 Node.js 完整 API |
+| 状态存储 | EdgeOne Blob / KV（由平台注入） |
+| 对象存储 | 阿里云 OSS，私有桶；需 AccessKey 与 V4 签名权限 |
+| 下载中继 | 自建 ECS，Node 服务监听 `8091`，能访问 OSS 内网 |
+| 本地开发 | Node.js 22+（仅用于 `smoke.mjs` / `smoke-blob.mjs` 冒烟与静态检查） |
+| 部署 | EdgeOne Pages 控制台或关联仓库自动部署；无本地构建产物 |
+| 环境变量 | 见[配置项清单](../doc/appendix/config.md) |
 
 ## 数据库
 
-本项目**无数据库**。全部数据为 JSON 文件，随 git 版本控制。「迁移」通过编辑 JSON 文件并提交完成。桌面端的「数据同步」是从 GitHub 仓库拉取 JSON 到本地缓存目录，不涉及 schema 迁移。
+项目**无关系型数据库**。软件数据为 JSON 文件并随 git 版本控制；后端票据、登记与公告写入 EdgeOne 状态存储；文件写入 OSS。桌面端「数据同步」只是把 JSON 拉到本地缓存目录，不涉及 schema 迁移。

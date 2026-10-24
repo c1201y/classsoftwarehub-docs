@@ -5,8 +5,9 @@ import { defineNavbarConfig } from 'vuepress-theme-plume'
  * 顺序与读者心智模型一致：先读概览 → 再按形态看使用说明 → 再看开发 →
  * 查常见问题 → 下载 → 了解团队与致谢。
  *
- * 中英文两个 locale 的入口数量、顺序、icon 必须逐项对齐，
- * 只允许文字与链接前缀（/en/）不同。
+ * 中文站入口顺序：概览 → 使用文档 → 开发文档 → 常见问题 → 下载 → 团队。
+ * 英文站只保留已存在的页面（概览 / 网页端说明 / FAQ / 下载 / 团队），
+ * 未翻译的开发文档不再挂入口，避免死链。
  */
 const zhNavbar = defineNavbarConfig([
   { text: '概览', icon: 'material-symbols:overview-outline-rounded', link: '/doc/overview' },
@@ -27,7 +28,6 @@ const zhNavbar = defineNavbarConfig([
 const enNavbar = defineNavbarConfig([
   { text: 'Overview', icon: 'material-symbols:overview-outline-rounded', link: '/en/doc/overview' },
   { text: 'User Guide', icon: 'ep:guide', link: '/en/doc/guide/web' },
-  { text: 'Development', icon: 'lucide:code-2', link: '/en/dev/' },
   { text: 'FAQ', icon: 'mingcute:question-line', link: '/en/faq/' },
   { text: 'Download', icon: 'ic:outline-download', link: '/en/download' },
   {
