@@ -7,13 +7,14 @@ createTime: 2026/10/19 20:00:00
 
 ## 网页端（ClassSoftwareHub）
 
-**技术栈**：Vue 3.5 + Vue Router 4（hash 路由）+ Vite 8 + TypeScript ~6.0；UI 组件库 WinUIonWeb（上游源码内置于 `src/components`、`src/styles`、`src/utils`）；静态部署，动态能力调用 `csh-api`（`package.json:17-35`、`AGENTS.md:18`）。
+**技术栈**：Vue 3.5 + Vue Router 4（hash 路由）+ Vite 8 + TypeScript ~6.0；UI 组件库 WinUIonWeb（上游源码内置于 `src/components`、`src/styles`、`src/utils`）；静态部署，动态能力调用 `csh-api`（`package.json`）。
 
 **Node 版本要求**：`^20.19.0 || >=22.12.0`（`package.json:36-38`）。
 
 ```
 ClassSoftwareHub/
-├── 文字设置.ts                ★ 中文 UI 文案唯一修改点
+├── 文字设置.ts                ★ 中文 UI 文案的主要修改点
+├── 法律文本.ts                 用户协议 / 隐私政策 / 免责声明
 ├── 鸣谢文本.ts                 设置页致谢列表
 ├── AI导航文本.ts               AI 导航站点配置
 ├── index.html                 入口 HTML（异步注入百度统计）
@@ -33,7 +34,7 @@ ClassSoftwareHub/
 │   ├── main.ts                挂载入口
 │   ├── gallery/               ★ 本站应用代码（唯一应改动代码的位置）
 │   │   ├── App.vue           外壳：导航窗格 / 主题 / 节日皮肤 / 欢迎弹窗 / 数据错误条
-│   │   ├── router.ts         10 条路由
+│   │   ├── router.ts         12 条路由记录（10 条命名路由 + 2 条重定向）
 │   │   ├── pages/            HomePage / DownloadDetailPage / SettingsPage /
 │   │   │                     SubmitPage / FeedbackPage / AiNavPage / EchoCavePage / AgreementPage
 │   │   ├── tools/            ★ 内置工具：index.ts 注册表 + ToolShell.vue + 一工具一 .vue
@@ -56,7 +57,7 @@ ClassSoftwareHub/
 │   ├── components/ styles/ utils/ assets/   ⛔ WinUIonWeb 上游源码
 │   └── assets/               站点自有资源（icons/ · holiday/ · Fonts/ · AppIcon-* · feedback/）
 ├── dist/                     构建产物（勿提交）
-└── .github/workflows/         5 个工作流
+└── .github/workflows/         6 个工作流
 ```
 
 **入口链**：`index.html` → `src/main.ts` → `src/gallery/App.vue`（外壳）→ `src/gallery/router.ts`（路由）。
@@ -82,7 +83,7 @@ ClassSoftwareHub/
 
 ## 后端（csh-api）
 
-**技术栈**：JavaScript（ES Modules），运行于腾讯 EdgeOne Pages Functions（V8 隔离环境）；状态存储使用平台 Blob / KV；对象存储为阿里云 OSS，签名算法 V4；下载中继为自建 ECS（`http://8.159.148.101:8091`，走 OSS 内网）。
+**技术栈**：JavaScript（ES Modules），运行于腾讯 EdgeOne Pages Functions（V8 隔离环境）；状态存储使用平台 Blob / KV；对象存储为阿里云 OSS，签名算法 V4；下载中继为自建 ECS（默认 `http://<RELAY_HOST>:8091`，走 OSS 内网）。
 
 ```
 csh-api/
@@ -113,7 +114,7 @@ csh-api/
 | 每设备每日投稿 | 6 次 |
 | 每设备待审核投稿 | 3 条 |
 | OSS 单对象上限 | 2.5 GB |
-| 加速签名限额 | 20 次/IP/日，3000 次/全局/日 |
+| 加速签名限额 | 20 次/IP/日，3000 次/全局/日，20 GiB/全局/日 |
 
 ## 桌面端（Win10，ClassSoftwareHub-Desktop）
 
@@ -190,7 +191,7 @@ ClassSoftwareHub-windows7/
 ├── installer/
 │   ├── ClassSoftwareHub-Win7.iss   ★ Inno Setup 6 安装脚本
 │   ├── ChineseSimplified.isl       中文安装界面语言
-│   └── Legal.rtf                  条款（由 tools/sync-legal.mjs 生成，勿手改）
+│   └── Legal.rtf                  条款文本（随仓库维护）
 ├── tools/
 │   ├── pack-win7-portable.ps1     便携版组装脚本
 │   ├── publish-release-win7.mjs   发版脚本

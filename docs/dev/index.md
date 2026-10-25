@@ -20,13 +20,13 @@ createTime: 2026/10/19 20:00:00
 
 ## 一句话概括
 
-网页端仓库是**唯一数据权威源**；后端 `csh-api` 提供提交、反馈、签名、下载票据与公告等动态能力；两个桌面端是**外壳客户端**，均通过 GitHub 公开仓库直读软件数据，安装包不自带内容包。
+网页端仓库是**唯一数据权威源**；后端 `csh-api` 提供提交、反馈、签名、下载票据与公告等动态能力；两个桌面端是**外壳客户端**，均通过 GitHub 公开仓库直读软件数据，安装包不含软件清单（Win7 版仅内置镜像站清单与图标）。
 
 ## 仓库一览
 
 | 仓库 | 角色 | 主要语言 / 框架 | 发布物 |
 | --- | --- | --- | --- |
-| `ClassSoftwareHub` | 网站与软件数据权威源 | Vue 3 + Vite + TypeScript | 静态站点、单文件 HTML |
+| `ClassSoftwareHub` | 网站与软件数据权威源 | Vue 3 + Vite + TypeScript | 静态站点（另有单文件 HTML 构建可选） |
 | `csh-api` | 后端 | JavaScript（EdgeOne Pages Functions） | 边缘函数（自动部署） |
 | `ClassSoftwareHub-Desktop` | Win10 桌面端 | C# / WinUI 3 / .NET 10 | Inno Setup 安装包 |
 | `ClassSoftwareHub-windows7` | Win7 兼容桌面端 | C# / Avalonia / .NET 6 | 安装包、便携版 zip |

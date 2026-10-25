@@ -16,7 +16,7 @@ npm run type-check    # TypeScript 类型检查（vue-tsc --build）
 npm run check         # type-check + build
 ```
 
-脚本定义见 `package.json:8-16`。开发服务器配置（host `0.0.0.0`、port 5173、轮询监视）见 `vite.config.ts:19-30`；Windows 上改用轮询是为规避 node fs watcher 在文件被原子替换时抛 EBUSY 导致 dev server 崩溃的问题。
+脚本定义见 `package.json:8-16`。开发服务器监听 `0.0.0.0:5173`，配置见 `vite.config.ts:20-23`（未启用轮询监视）。
 
 ## 桌面端（Win10）
 
@@ -115,7 +115,7 @@ dotnet publish src\Launcher\ClassSoftwareHub.Launcher.csproj -c Release -r win-x
 | `--takeover` | 单实例冲突时跳过敲门等待，直接结束拿不出可见主窗口的现有实例 |
 | `--simulate-win7` | 强制按 Win7 分支运行（开发机复现教室机代码路径） |
 
-上述开关见 `src/Program.cs`，正式版同样识别。另支持环境变量 `CSH_SIMULATE_WIN7=1`，与 `--simulate-win7` 等效（`src/Program.cs:66-68`）。
+上述开关见 `src/Program.cs`，正式版同样识别。另支持环境变量 `CSH_SIMULATE_WIN7=1`，与 `--simulate-win7` 等效（`src/Program.cs:77-79`）。
 
 ## 测试
 

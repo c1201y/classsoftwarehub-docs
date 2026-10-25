@@ -10,6 +10,7 @@ createTime: 2026/10/19 20:00:00
 | 配置 | 位置 | 类型 |
 | --- | --- | --- |
 | 中文 UI 文案 | `文字设置.ts` | 源码常量 |
+| 条款 / 法律文本 | `法律文本.ts` | 源码常量 |
 | 英文 UI 文案 | `src/gallery/Strings/en-US/Resources.ts` | 源码常量 |
 | 致谢列表 | `鸣谢文本.ts` | 源码常量 |
 | AI 导航站点 | `AI导航文本.ts` | 源码常量 |
@@ -23,13 +24,13 @@ createTime: 2026/10/19 20:00:00
 | 下载票据入口 | `src/gallery/ossDownload.ts` | 源码常量 |
 | 构建 base | `vite.config.ts` 的 `base: './'` | 构建配置 |
 | 单文件开关 | 环境变量 `SINGLEFILE=1` | 构建环境变量 |
-| 开发服务器 | `vite.config.ts`：host `0.0.0.0`、port 5173、`usePolling: true`、interval 400 | 构建配置 |
+| 开发服务器 | `vite.config.ts`：host `0.0.0.0`、port 5173（未启用轮询监视） | 构建配置 |
 | CI Secrets | `FTP_SERVER` / `FTP_USERNAME` / `FTP_PASSWORD` / `WEBDAV_USERNAME` / `WEBDAV_PASSWORD` | 仓库 Secret |
 | 本地令牌 | `GITHUB_TOKEN` | 环境变量 |
 
 ## 后端（csh-api / EdgeOne Pages）
 
-代码默认值见 `functions/api/[[default]].js` 的 `ENV_DEFAULTS`；部署时通过 EdgeOne 环境变量覆盖。
+表中非空默认值来自 `functions/api/[[default]].js` 的 `ENV_DEFAULTS`；标「无」的变量没有代码默认值，必须在 EdgeOne 环境变量中提供。部署时通过 EdgeOne 环境变量覆盖。
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
@@ -61,7 +62,7 @@ createTime: 2026/10/19 20:00:00
 | `SUBMIT_REQUIRE_SOURCE` | `true` | 是否要求提供来源 |
 | `SIGN_PER_IP_PER_DAY` | `20` | 每 IP 每日签名限额 |
 | `SIGN_GLOBAL_PER_DAY` | `3000` | 全局每日签名限额 |
-| `SIGN_GLOBAL_BYTES_PER_DAY` | 未设置 | 全局每日签名流量上限（字节） |
+| `SIGN_GLOBAL_BYTES_PER_DAY` | `21474836480`（20 GiB） | 全局每日签名流量上限（字节） |
 | `PURGE_TOKEN` | 无 | 管理接口令牌 |
 | `ALLOWED_ORIGIN` | `*` | CORS 允许来源 |
 
@@ -69,15 +70,15 @@ createTime: 2026/10/19 20:00:00
 
 | 配置 | 位置 | 默认值 |
 | --- | --- | --- |
-| 站点地址 | `ShellConfig.SiteUrl` | `https://classsoftwarehub.us.ci` |
+| 站点地址 | `ShellConfig.SiteUrl` | `https://classsoftwarehub.us.ci`（代码当前值；站点主域已切到 `classsoftwarehub.cn`） |
 | 版本号 | `ShellConfig.ShellVersion` | `1.2.0-insider1.4` |
 | 版本前缀 | `ShellConfig.VersionPrefix` | `dv` |
 | 更新仓库 | `ShellConfig.UpdateRepoOwner` / `UpdateRepoName` | `c1201y` / `ClassSoftwareHub-Desktop` |
 | 数据仓库 | `ShellConfig.SiteRepoOwner` / `SiteRepoName` / `SiteRepoBranch` | `c1201y` / `ClassSoftwareHub` / `main` |
 | 数据目录 | `ShellConfig.SiteRepoDataDir` | `软件数据` |
-| 内容清单 | `ShellConfig.ContentManifestUrl` | 主站 `/content/manifest.json` |
-| 内置内容目录 | `ShellConfig.BundledContentDir` | 无（1.2.0 起取消） |
-| 站点版本对齐 | `ShellConfig.SiteVersionTarget` / `SiteVersionDisplay` | `v2.3.4` / `v2.3.4 - Tangram (20260927PR01)` |
+| 内容清单 | `ShellConfig.ContentManifestUrl` / `ContentManifestUrlFallback` | `https://classsoftwarehub.us.ci/content/manifest.json` / 网盘 `pan.132614.xyz` |
+| 内置内容目录 | `ShellConfig.BundledContentDir` | 无（1.1.1 起取消） |
+| 站点版本对齐 | `ShellConfig.SiteVersionTarget` / `SiteVersionDisplay` | `v2.3.4` / `v2.3.4 - Tangram (20260927PR01)`（网页端当前为 v2.3.5，桌面端常量尚未跟进） |
 | 单实例互斥名 | `ShellConfig.MutexName` | `ClassSoftwareHub.Desktop.SingleInstance` |
 | 唤醒事件名 | `ShellConfig.ActivateEventName` | `ClassSoftwareHub.Desktop.ActivateMainWindow` |
 | 数据目录 | `AppPaths.DataDir` | `%LOCALAPPDATA%\ClassSoftwareHub` |
@@ -96,12 +97,12 @@ createTime: 2026/10/19 20:00:00
 | `SidebarMode` | `dock` | `dock` 贴靠 / `free` 自由 |
 | `SidebarModuleIds` | 抽号、计时、秒表、时钟 | 侧边栏模块与顺序 |
 | `HubAiEnabled` | `true` | 启用 Hub AI |
-| `HubAi.provider` | `deepseek` | AI 服务商 |
-| `HubAi.baseUrl` | `https://api.deepseek.com/v1` | 接口地址 |
-| `HubAi.model` | `deepseek-v4-flash` | 模型 |
+| `HubAiProvider` | `deepseek` | AI 服务商 |
+| `HubAiBaseUrl` | `https://api.deepseek.com/v1` | 接口地址 |
+| `HubAiModel` | `deepseek-v4-flash`（旧别名，加载时自动修正为 `deepseek-flash`） | 模型 |
 | `UpdateChannel` | 由版本号推导 | `stable` / `insider` |
 | `AutoCheckUpdate` | `true` | 启动时自动检查更新 |
-| `LogRetentionDays` | `7` | 日志保留天数 |
+| `LogKeepDays` | `7` | 日志保留天数 |
 
 ## 桌面端（Windows 7）
 
@@ -113,8 +114,8 @@ createTime: 2026/10/19 20:00:00
 | 数据目录 | `ShellConfig.SiteRepoDataDir` | `软件数据` |
 | 提交入口 | `ShellConfig.SubmitEndpoints`（历史值） | `https://cshapi.132614.xyz`、`https://submit.132614.xyz` |
 | 提交超时 | `ShellConfig.SubmitTimeoutMs` | `10000` ms |
-| 内容清单 | `ShellConfig.ContentManifestUrl` / `ContentManifestUrlFallback` | 主站 / 网盘 |
-| 站点版本对齐 | `ShellConfig.SiteVersionTarget` / `SiteVersionDisplay` | `v2.3.4` / `v2.3.4 - Tangram (20260927PR01)` |
+| 内容清单 | `ShellConfig.ContentManifestUrl` / `ContentManifestUrlFallback` | `https://classsoftwarehub.us.ci/content/manifest.json` / 网盘 `pan.132614.xyz` |
+| 站点版本对齐 | `ShellConfig.SiteVersionTarget` / `SiteVersionDisplay` | `v2.3.4` / `v2.3.4 - Tangram (20260927PR01)`（网页端当前为 v2.3.5，桌面端常量尚未跟进） |
 | 导航超时 | `ShellConfig.LoadTimeoutSeconds` | `25` s |
 | 标题栏高度 | `ShellConfig.TitleBarHeight` | `48` |
 | 单实例互斥名 | `ShellConfig.MutexName` | `ClassSoftwareHub.Desktop.SingleInstance` |

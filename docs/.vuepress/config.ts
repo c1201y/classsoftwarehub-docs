@@ -32,10 +32,10 @@ export default defineUserConfig({
 
   theme: plumeTheme({
     /* 添加您的部署域名, 有助于 SEO, 生成 sitemap */
-    hostname: 'https://classsoftwarehub.us.ci/',
+    hostname: 'https://docs.classsoftwarehub.cn/',
 
     /* 文档仓库配置，用于 editLink */
-    docsRepo: 'https://github.com/c1201y/ClassSoftwareHub',
+    docsRepo: 'https://github.com/c1201y/classsoftwarehub-docs',
     docsDir: 'docs',
     docsBranch: 'main',
 

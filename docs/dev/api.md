@@ -13,7 +13,7 @@ createTime: 2026/10/19 20:00:00
 
 | 路由 | 方法 | 请求 | 响应 | 说明 |
 | --- | --- | --- | --- | --- |
-| `/api/status` | GET | — | 健康检查 JSON | 存储、OSS、GitHub API、中继、下载模式 |
+| `/api/status` | GET | — | 健康检查 JSON | 存储、OSS、GitHub API、加速签名配置、中继、下载模式 |
 | `/api/submit` | POST | 应用字段 + `_` 前缀审核字段 | `{ success: true, message }` 或 `{ error }` | 写入 `submissions/<id>.json` |
 | `/api/echocave` | POST | `{ "text": "…" }` | 同上 | 写入 `submissions/echo-<时间戳>-<随机>.json` |
 | `/api/feedback` | POST | 反馈表单 + age 密文联系方式 | 同上，可能带回 `url` | 拒绝明文 `contact` |
@@ -65,7 +65,7 @@ createTime: 2026/10/19 20:00:00
 
 | purpose | 前缀 | 读取路径 |
 | --- | --- | --- |
-| `icon` | `icon/…` | 小图（≤ 1 MB），走 `/api/icon` 公开只读 |
+| `icon` | `icon/…` | 小图，上传签名上限 1 MB，走 `/api/icon` 公开只读（读取上限 5 MB） |
 | 其他或缺省 | `upload/…`（由 `OSS_PREFIX` 决定） | 私有，下载要过 `/api/dl` 的短时票据闸门 |
 
 ::: warning Content-Type 必须一致
@@ -96,7 +96,7 @@ createTime: 2026/10/19 20:00:00
 3. nginx 校验签名、有效期与 Referer 白名单后反代 GitHub。
 4. 签名失败时客户端按公共镜像列表回退。
 
-限额：`SIGN_PER_IP_PER_DAY`（默认 20）、`SIGN_GLOBAL_PER_DAY`（默认 3000）。
+限额：每 IP 每日 20 次（`SIGN_PER_IP_PER_DAY`）、全局每日 3000 次（`SIGN_GLOBAL_PER_DAY`）、全局每日 20 GiB 流量（`SIGN_GLOBAL_BYTES_PER_DAY`）。
 
 ## 错误码
 
@@ -126,7 +126,7 @@ createTime: 2026/10/19 20:00:00
 | 异常 | 触发条件 |
 | --- | --- |
 | `ChecksumMismatchException` | 下载包校验不通过；携带算法、期望值、实际值与处置建议 |
-| `MissingChecksumException` | 发布未提供任何可用校验值；中止更新，绝不执行未校验的安装包 |
+| `MissingChecksumException` | Win7 版专用：发布未提供任何可用校验值（`.md5` 与 SHA256 都没有）时中止更新，绝不执行未校验的安装包。Win10 版当前只记警告并继续，不发该异常 |
 
 ### 后端响应约定
 
@@ -148,7 +148,8 @@ createTime: 2026/10/19 20:00:00
 | `description` | string | 是 | 详细介绍 |
 | `version` | string | 否 | 版本号 |
 | `size` | string | 否 | 体积 |
-| `system` | string | 是 | 系统限制 |
+| `system` | string | 是 | 系统限制（给人看的说明） |
+| `platforms` | string[] | 否 | 平台筛选键（`windows` / `macos` / `linux` / `android` / `ios` / `web`）；只用于筛选，展示文案仍取 `system` |
 | `website` | string | 否 | 官方网站 |
 | `github` | string | 否 | GitHub 仓库地址（只填仓库地址） |
 | `notice` | string | 否 | 详情页下载区上方蓝色提示条 |

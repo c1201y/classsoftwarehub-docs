@@ -11,14 +11,15 @@ createTime: 2026/10/19 20:00:00
 
 | 配置项 | 位置 | 说明 |
 | --- | --- | --- |
-| 站点全部中文文案 | `文字设置.ts` | 唯一修改点；键名不可改 |
+| 站点全部中文文案 | `文字设置.ts` | 主要修改点；键名不可改 |
+| 条款 / 法律文本 | `法律文本.ts` | 用户协议、隐私政策、免责声明 |
 | 英文站文案 | `src/gallery/Strings/en-US/Resources.ts` | 与中文站同步 |
 | 致谢列表 | `鸣谢文本.ts` | 独立于 `文字设置.ts` |
 | AI 导航站点 | `AI导航文本.ts` | 名称 / 简介 / 网址 |
 | 软件数据 | `软件数据/apps/*.json` | 一软件一文件 |
 | 分类 | `软件数据/categories.json` | 6 个分类 |
 | 平台 | `软件数据/platforms.json` | 6 个平台 |
-| 版本号 | `文字设置.ts` 的 `app.version`（3 处）、英文站 `Resources.ts`、`package.json` | 需同步修改 |
+| 版本号 | `文字设置.ts` 中的版本字符串（首页副标题、欢迎语、`app.version` 共 3 处）、英文站 `Resources.ts`、`package.json` | 需同步修改 |
 | 加速下载镜像通道 | `src/gallery/githubMirror.ts` 的 `MIRROR_CHANNELS` | 增删镜像只改此处 |
 | 加速签名入口 | `src/gallery/githubMirror.ts` 的 `SIGN_ENDPOINTS` | 首选 `https://api.classsoftwarehub.cn/api/mirror-sign` |
 | 后端入口 | `src/gallery/submitEndpoints.ts` | 当前仅 `https://api.classsoftwarehub.cn` |
@@ -73,15 +74,15 @@ createTime: 2026/10/19 20:00:00
 
 | 常量 | 当前值 | 说明 |
 | --- | --- | --- |
-| `SiteUrl` | `https://classsoftwarehub.us.ci` | 站点地址 |
+| `SiteUrl` | `https://classsoftwarehub.us.ci` | 站点地址（代码当前值；站点主域已切到 `classsoftwarehub.cn`，桌面端常量尚未跟进） |
 | `ShellVersion` | `1.2.0-insider1.4` | 版本号唯一来源 |
 | `VersionPrefix` | `dv` | 版本号前缀 |
 | `UpdateRepoOwner` / `UpdateRepoName` | `c1201y` / `ClassSoftwareHub-Desktop` | 更新仓库 |
 | `SiteRepoOwner` / `SiteRepoName` / `SiteRepoBranch` | `c1201y` / `ClassSoftwareHub` / `main` | 软件数据来源仓库 |
 | `SiteRepoDataDir` | `软件数据` | 仓库中软件数据目录 |
 | `ContentManifestUrl` | 主站 `/content/manifest.json` | 备用内容来源 |
-| `BundledContentDir` | 无 | 1.2.0 起取消内置内容 |
-| `SiteVersionTarget` / `SiteVersionDisplay` | `v2.3.4` / `v2.3.4 - Tangram (20260927PR01)` | 与站点对齐的版本号 |
+| `BundledContentDir` | 无 | 1.1.1 起取消内置内容 |
+| `SiteVersionTarget` / `SiteVersionDisplay` | `v2.3.4` / `v2.3.4 - Tangram (20260927PR01)` | 代码中的站点对齐值；网页端实际已是 `v2.3.5` |
 | `MutexName` | `ClassSoftwareHub.Desktop.SingleInstance` | 单实例互斥名 |
 | `ActivateEventName` | `ClassSoftwareHub.Desktop.ActivateMainWindow` | 唤醒主窗口的命名事件 |
 
@@ -98,11 +99,11 @@ createTime: 2026/10/19 20:00:00
 | `SidebarMode` | `dock` | `dock` / `free` |
 | `SidebarModuleIds` | 抽号、计时、秒表、时钟 | 侧边栏模块与顺序 |
 | `HubAiEnabled` | `true` | 启用 Hub AI |
-| `HubAi.provider` | `deepseek` | AI 服务商 |
-| `HubAi.baseUrl` | `https://api.deepseek.com/v1` | 接口地址 |
-| `HubAi.model` | `deepseek-v4-flash` | 模型 |
+| `HubAiProvider` | `deepseek` | AI 服务商 |
+| `HubAiBaseUrl` | `https://api.deepseek.com/v1` | 接口地址 |
+| `HubAiModel` | `deepseek-v4-flash` | 模型 |
 | `AutoCheckUpdate` | `true` | 启动时检查更新 |
-| `LogRetentionDays` | `7` | 日志保留天数 |
+| `LogKeepDays` | `7` | 日志保留天数 |
 | `TelemetryEnabled` | `false` | 遥测，默认关闭；当前为空操作 |
 
 ## 桌面端（Windows 7）
@@ -111,7 +112,7 @@ createTime: 2026/10/19 20:00:00
 
 | 常量 | 当前值 | 说明 |
 | --- | --- | --- |
-| `SiteUrl` | `https://classsoftwarehub.us.ci` | 站点地址 |
+| `SiteUrl` | `https://classsoftwarehub.us.ci` | 站点地址（代码当前值；站点主域已切到 `classsoftwarehub.cn`，桌面端常量尚未跟进） |
 | `ShellVersion` | `1.2.0-insider1.2` | 版本号唯一来源 |
 | `VersionPrefix` | `dv` | 版本号前缀 |
 | `UpdateRepoOwner` / `UpdateRepoName` | `c1201y` / `ClassSoftwareHub-windows7` | 更新仓库 |

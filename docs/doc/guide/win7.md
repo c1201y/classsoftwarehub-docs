@@ -25,7 +25,7 @@ createTime: 2026/10/19 20:00:00
 | 形态 | 文件 | 说明 |
 | --- | --- | --- |
 | 安装版 | `ClassSoftwareHub-Setup-win7-dv<版本>.exe` | Inno Setup 6，当前用户安装，写卸载项与快捷方式 |
-| 便携版 | `ClassSoftwareHub-Portable-win7-dv<版本>.zip` | 解压即用，不写注册表；`app\` 必须与启动器同目录 |
+| 便携版 | `ClassSoftwareHub-Portable-win7-dv<版本>.zip` | 解压即用，不写卸载注册项；`app\` 必须与启动器同目录 |
 
 安装版采用「启动器 + `app\` 子目录」两层结构，更新时只替换 `app\`，启动器与桌面快捷方式路径永远有效。便携版的 `使用说明.txt` 为带 BOM 的 UTF-8，避免 Windows 7 记事本按 ANSI 解码导致中文乱码。
 
@@ -33,8 +33,8 @@ createTime: 2026/10/19 20:00:00
 
 - **渲染**：Windows 7 上默认直接走软件渲染（帧缓冲在进程内存中），从根本上避免老显卡表面保帧不可靠导致的残影。代价是界面稍慢，但对「大部分时间静止」的界面开销可接受；WebView2 为独立进程渲染，不受影响。
 - **视觉效果降级链**：Windows 7 无云母 / 亚克力 / 深色标题栏 / 窗口圆角，背景材质会自动分级降级到 Aero 毛玻璃或纯色。DWM 合成被关闭（经典 / 基本主题）时一律退回纯色底，不留透明。
-- **图标字体**：Windows 7 无 Segoe MDL2 Assets / Segoe Fluent Icons，已改用内嵌字体，原有图标码位重映射，视觉与原版一致。
-- **截屏**：Windows 7 无 `Windows.Graphics.Capture`，截屏改走 GDI `BitBlt`。
+- **图标字体**：Windows 7 无 Segoe MDL2 Assets / Segoe Fluent Icons，已改用内嵌字体，原有图标码位重映射，视觉尽量与原版保持一致（少数码位仍可能显示为空白或方块，见「已知限制」）。
+- **截屏**：两版截屏都走 Win32 GDI `BitBlt`（原版即未使用 `Windows.Graphics.Capture`），Win7 版为同源实现。
 
 ## 功能范围
 
@@ -57,9 +57,9 @@ createTime: 2026/10/19 20:00:00
 | 系统底线 | Windows 10 1809 | Windows 7 SP1 |
 | UI 框架 | WinUI 3 | Avalonia 11.2.8 + FluentAvaloniaUI 2.4.1 |
 | 背景材质 | 云母 / 亚克力 | Aero 毛玻璃或纯色（按 DWM 合成状态降级） |
-| 标题栏 | 可扩展客户区 + 深色标题栏 | 保留系统边框，更稳 |
+| 标题栏 | 客户区扩展 + 系统绘制窗口按钮 | 自绘 48px 标题栏，保留系统拖拽缩放、Aero 吸附与双击最大化 |
 | 图标字体 | Segoe MDL2 Assets | 内嵌字体 |
-| 截屏 | `Windows.Graphics.Capture` | GDI `BitBlt` |
+| 截屏 | GDI `BitBlt` | GDI `BitBlt`（同源） |
 | WebView2 | 运行时版本不受限 | 运行时止于 109.0.1518.x，SDK 锁定 `1.0.1587.40` |
 | 启动加速 | JIT | ReadyToRun 预编译（代价为体积约 +30%） |
 | 安装形态 | 仅安装版 | 安装版 + 便携版 |

@@ -31,11 +31,11 @@ createTime: 2026/10/19 20:00:00
 
 | 链接 | 地址 |
 | --- | --- |
-| 主站 | `https://classsoftwarehub.us.ci` |
-| 备用站点 | `https://classsoftwarehub.132614.xyz` |
+| 主站 | `https://classsoftwarehub.cn` |
+| 备用站点 | `https://classsoftwarehub.132614.xyz`、`https://classsoftwarehub.xfane.com` |
 | 网页端仓库 | `https://github.com/c1201y/ClassSoftwareHub` |
 | Windows 7 版仓库 | `https://github.com/c1201y/ClassSoftwareHub-windows7` |
 | WinUI 3 原版仓库 | `https://github.com/c1201y/ClassSoftwareHub-Desktop` |
 | 问题反馈 | `https://github.com/c1201y/ClassSoftwareHub/issues` |
 | QQ 群 | 487903798 |
-| 投喂作者 | `https://afdian.com/a/cyan1201` |
+| 投喂作者 | `https://ifdian.net/a/TinyNickCSHub` |

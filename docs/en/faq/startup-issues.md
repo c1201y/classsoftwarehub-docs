@@ -11,15 +11,15 @@ createTime: 2026/10/19 20:00:00
 
 **Cause**: closing the window sends the app to the tray, so the process is still alive; a second instance is blocked by the single-instance mutex while the first cannot raise its main window.
 
-**Resolution**: look for the app icon in the tray (including the overflow area) and click it. If that fails, launch once with `--takeover`, which ends the existing instance that cannot present a visible main window.
+**Resolution**: look for the app icon in the tray (including the overflow area) and click it. If that fails, end any leftover process in Task Manager and relaunch. The Windows 7 build additionally accepts `--takeover`, which ends the existing instance that cannot present a visible main window.
 
 ## The installer says the system is not supported
 
 **Symptom**: the installer reports the OS version is too low and aborts.
 
-**Cause**: below Windows 7 SP1. .NET 6 requires SP1 on Windows 7, a hard floor.
+**Cause**: below Windows 10 1809 (build 17763) for the Windows 10 build, or below Windows 7 SP1 for the Windows 7 build (.NET 6 requires SP1).
 
-**Resolution**: install Windows 7 Service Pack 1 and retry; or use the web site, which has the same features and no OS constraint.
+**Resolution**: upgrade to the corresponding minimum and retry; or use the web site, which has the same features and no OS constraint.
 
 ## The installer says the app is running
 
@@ -43,11 +43,11 @@ createTime: 2026/10/19 20:00:00
 
 **Cause**: the graphics driver is incompatible with D3D11 / OpenGL and the automatic fallback chain cannot recover.
 
-**Resolution**: launch with `--software-render` to force software rendering. It is slower, but the UI appears. The parameter is recognised by release builds too.
+**Resolution**: launch with `--software-render` to force software rendering. It is slower, but the UI appears. The switch is also honoured by release builds of the Windows 7 build; the Windows 10 build has no rendering-related startup switches.
 
 ## Random grey rectangles on screen
 
-**Symptom**: animation-heavy pages such as the drawing page show randomly positioned pale grey rectangles whose shape changes every frame.
+**Symptom**: animation-heavy pages such as the random draw page show randomly positioned pale grey rectangles whose shape changes every frame.
 
 **Cause**: old Windows 7 graphics drivers cannot reliably preserve the previous frame on the render surface, so unredrawn areas expose stale pixels.
 
@@ -63,9 +63,13 @@ createTime: 2026/10/19 20:00:00
 
 ## Command-line switches for diagnosis
 
-| Switch | Effect |
-| --- | --- |
-| `--software-render` | Force software rendering |
-| `--gpu-render` | Allow the GPU fallback chain |
-| `--takeover` | On single-instance conflict, end the instance that cannot present a visible main window |
-| `--simulate-win7` | Force the Windows 7 code path (development machines) |
+| Switch | Applies to | Effect |
+| --- | --- | --- |
+| `--software-render` | Windows 7 build | Force software rendering |
+| `--gpu-render` | Windows 7 build | Allow the GPU fallback chain (for comparison) |
+| `--takeover` | Windows 7 build | On single-instance conflict, end the instance that cannot present a visible main window |
+| `--simulate-win7` | Windows 7 build | Force the Windows 7 code path on a development machine |
+| `--minimized` | Both builds | Start hidden in the tray without showing the main window |
+| `--palette` | Both builds | Show only the tool palette, without the main window |
+
+The Windows 10 build recognises only `--minimized` and `--palette`; other switches are ignored.

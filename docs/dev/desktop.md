@@ -63,7 +63,7 @@ createTime: 2026/10/24 10:00:00
 | AI | `Services/HubAi/*` | 多提供方、会话、工具调用、DPAPI 密钥 |
 | 日志 | `Core/AppLog.cs`、`LogHome.cs`、`LogReader.cs` | 每次启动一个目录 |
 | 系统集成 | `StartupItems.cs`、`SystemRepair.cs`、`AppUninstaller.cs`、`AppDataScan.cs`、`AutoShutdown.cs` | 启动项、修复、卸载残留、应用数据、定时关机 |
-| 截屏 | `ScreenCapture.cs`、`Views/*` | `Windows.Graphics.Capture` + 编辑器 |
+| 截屏 | `ScreenCapture.cs`、`Views/*` | Win32 GDI `BitBlt` + 编辑器 |
 | 托盘 | `TrayIcon.cs` | 托盘菜单与显示 / 退出 |
 
 ## 内容同步
@@ -89,7 +89,7 @@ Debug 构建读开发目录优先，Release 读缓存优先；**没有「安装�
 
 - 更新源抽象为 `IUpdateSource`，默认 `GitHubReleaseSource`。
 - 正式版只读非预发布 Release；预览版读预发布 + 非预发布。
-- 校验值必须存在：发布方既无 `.md5` 资产、接口也无 SHA256 时抛 `MissingChecksumException`；不匹配抛 `ChecksumMismatchException`。
+- 校验值优先取 Release 的 `.md5` 资产，其次用 GitHub Release API 返回的 SHA256。**两版行为不同**：Win7 版在两者都没有时抛 `MissingChecksumException` 中止更新；Win10 版当前只记一条「未提供校验值（已跳过校验）」警告并继续安装。校验不匹配抛 `ChecksumMismatchException`。
 - 安装为静默安装；历史版本列表按当前通道过滤，回滚不校验版本高低。
 
 ## Hub AI

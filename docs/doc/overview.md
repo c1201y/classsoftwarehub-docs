@@ -63,14 +63,14 @@ graph LR
     C -->|"提交 / 反馈 / 加速签名"| API
     API -->|"写入 submissions/*.json"| A
     API -->|"受控直传 / 票据下载"| OSS["阿里云 OSS<br/>私有桶"]
-    API -->|"内网中转"| ECS["ECS 中转<br/>8.159.148.101:8091"]
+    API -->|"内网中转"| ECS["ECS 中转<br/>:8091"]
     ECS --> OSS
 ```
 
 软件数据仍以网站仓库的 `软件数据/apps/*.json` 为唯一权威源；后端只承担「提交收件箱、反馈、回声洞、OSS 直传签名、下载票据、GitHub 加速签名」等动态能力，不存储软件正文。
 
 ::: info 内容包
-两个桌面端安装包**均不自带内容包**（Win10 1.2.0 起取消内置副本），首次启动必须联网，从 GitHub 公开仓库直读 `软件数据/apps/*.json`。若上游删除了某个软件，本地缓存也会同步删除，避免「已下架的软件删了又复活」。
+两个桌面端安装包**均不自带软件数据**（Win10 1.1.1 起取消内置副本），首次启动必须联网，从 GitHub 公开仓库直读 `软件数据/apps/*.json`。Windows 7 版仍随包附带系统镜像站清单与图标，仅作离线兜底，不包含软件清单。若上游删除了某个软件，本地缓存也会同步删除，避免「已下架的软件删了又复活」。
 :::
 
 ## 下载与加速
@@ -88,7 +88,7 @@ graph LR
 
 ## 获取帮助
 
-- 站点：[classsoftwarehub.us.ci](https://classsoftwarehub.us.ci)
-- 备用站点：[classsoftwarehub.132614.xyz](https://classsoftwarehub.132614.xyz)
+- 站点：[classsoftwarehub.cn](https://classsoftwarehub.cn)
+- 备用站点：[classsoftwarehub.132614.xyz](https://classsoftwarehub.132614.xyz)、[classsoftwarehub.xfane.com](https://classsoftwarehub.xfane.com)
 - 问题反馈：[GitHub Issues](https://github.com/c1201y/ClassSoftwareHub/issues)
 - QQ 群：487903798

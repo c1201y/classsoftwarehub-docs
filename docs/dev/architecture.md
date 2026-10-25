@@ -59,7 +59,7 @@ graph TB
 
 ## 依赖关系
 
-1. **数据流向**：网站仓库的 `软件数据/apps/*.json` 是唯一权威源。两个桌面端安装包**不自带内容包**，首次启动必须联网，通过 GitHub 公开仓库直读该目录（`ClassSoftwareHub-Desktop/Services/GithubContentSync.cs`、`ClassSoftwareHub-windows7/src/Services/GithubContentSync.cs`）。这样已下架的软件不会因装机残留「删了又复活」，文案也不会被旧缓存锁死。
+1. **数据流向**：网站仓库的 `软件数据/apps/*.json` 是唯一权威源。两个桌面端安装包**不自带软件数据**，首次启动必须联网，通过 GitHub 公开仓库直读该目录（`ClassSoftwareHub-Desktop/Services/GithubContentSync.cs`、`ClassSoftwareHub-windows7/src/Services/GithubContentSync.cs`）。这样已下架的软件不会因装机残留「删了又复活」，文案也不会被旧缓存锁死。Win7 版安装包仍附带系统镜像站清单与图标，仅作离线兜底。
 2. **提交回流**：访客通过网页端或桌面端提交软件 / 回声洞 / 反馈，后端校验后写入 `submissions/*.json`，GitHub Actions 转为 Issue，维护者打标签后由 `review-submission.yml` 合并回 `软件数据/apps/<id>.json` 或 `回声洞/messages/`。
 3. **发布隔离**：两个桌面端使用各自的更新仓库与 AppId，独立发布、独立更新，互不接收对方版本。
 4. **可同机共存**：两个桌面端安装目录、AppId 均不同（`...\Programs\ClassSoftwareHub` / `...\Programs\ClassSoftwareHub-Win7`）。
@@ -167,7 +167,7 @@ installer/                ← 安装脚本（不随包发布）
 ### Win7
 
 ```
-ClassSoftwareHub.exe      ← 启动器（src/Launcher，自包含 + 裁剪 + 单文件，约 9 MB）
+ClassSoftwareHub.exe      ← 启动器（src/Launcher，自包含 + 裁剪 + 单文件，约 5–9 MB）
 app\                      ← 应用本体（publish 产物）
 使用说明.txt              ← 便携版才有
 ```

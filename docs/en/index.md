@@ -76,7 +76,7 @@ config:
     features:
       - title: "Step 1: open or install"
         icon: lucide:download
-        details: "Use the web site directly, or download the desktop installer / portable build. Path: /en/doc/guide/web"
+        details: "Use the web site directly, or download the desktop installer (the Windows 7 edition also offers a portable build). Path: /en/doc/guide/web"
       - title: "Step 2: finish onboarding"
         icon: lucide:map
         details: "First launch syncs the software catalogue over the network, then you can browse and download. Path: /en/doc/guide/desktop"

@@ -7,9 +7,9 @@ createTime: 2026/10/19 20:00:00
 
 ## What must I fill in to submit software
 
-Required: `id`, `name`, `category`, `tagline`, `description`, `system`, a contact, and **at least one direct file link**. The submit page validates these client-side.
+Required: `id`, `name`, `category`, `tagline`, `description`, `system`, a contact, and **at least one download item**. A download item can be a direct file link or an official/download page or netdisk page (`kind` set to `page` / `netdisk`). The submit page validates these client-side.
 
-`id` allows lowercase letters, digits and hyphens only, and must not contain `?` `&` `=` — 5 malformed historical `id` values once caused "software not found" on the detail page, and are now fixed.
+`id` allows lowercase letters, digits and hyphens only, and must not contain `?` `&` `=` — malformed historical `id` values once caused "software not found" on the detail page, and are now fixed.
 
 ## What is "Import from GitHub"
 
@@ -62,4 +62,4 @@ Yes. Each post is limited to 200 characters. Posts land as drafts and enter the 
 
 ## Download says quota exhausted
 
-Site-hosted OSS objects use a ticket gate: each device gets 80 downloads per day by default, using a 15-minute short-lived ticket. Once exhausted, try again the next day or use the software's official direct link.
+Site-hosted OSS objects use a ticket gate: each device gets 25 downloads per day by default (backend `DL_DAILY_LIMIT`), using a short-lived ticket valid for about 15 minutes. Once exhausted, try again the next day or use the software's official direct link.

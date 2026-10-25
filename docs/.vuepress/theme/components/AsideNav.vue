@@ -34,7 +34,7 @@ const locale = computed(() => locales[lang.value] ?? locales['/'])
       <span class="link-text">{{ locale.issue }}</span>
       <span class="vpi-arrow-right" />
     </VPLink>
-    <VPLink class="link" no-icon href="https://classsoftwarehub.us.ci">
+    <VPLink class="link" no-icon href="https://classsoftwarehub.cn">
       <VPIcon name="octicon:globe-16" />
       <span class="link-text">{{ locale.web }}</span>
       <span class="vpi-arrow-right" />

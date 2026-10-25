@@ -20,7 +20,7 @@ createTime: 2026/10/19 20:00:00
 
 ## 配置管理
 
-**站点文字**：中文站唯一需要修改的文件是仓库根目录 `文字设置.ts`，只改引号内的值，**不得改左侧键名**。英文站同步修改 `src/gallery/Strings/en-US/Resources.ts`。
+**站点文字**：中文站的界面文案主要在仓库根目录 `文字设置.ts`，只改引号内的值，**不得改左侧键名**。条款与法律文本在 `法律文本.ts`，鸣谢名单在 `鸣谢文本.ts`，AI 导航文案在 `AI导航文本.ts`；英文界面文案在 `src/gallery/Strings/en-US/Resources.ts`。
 
 **AI 导航**：根目录 `AI导航文本.ts`，每个网站一段配置。
 
@@ -119,7 +119,7 @@ python scripts/icon-sync.py --apply --only <软件id>
 
 后端源码在 `c1201y/csh-api`，主入口为 `functions/api/[[default]].js`，部署在腾讯 EdgeOne Pages，对外域名 `https://api.classsoftwarehub.cn`。根路径 `/` 提供状态面板（`functions/status.js`），`/api/status` 提供 JSON 健康检查。
 
-状态面板会逐项显示：状态存储、OSS、GitHub API、下载中继、下载模式，以及公告 / 投稿 / 直传 / 回声洞 / 反馈 / 下载闸门六项功能的可用性。
+状态面板会逐项显示：状态存储（Blob/KV）、OSS 对象存储、GitHub API、加速签名配置、ECS 中继（方法一）、后端直连 OSS（方法二）、当前下载模式，以及公告 / 投稿 / 直传 / 回声洞 / 反馈 / 下载闸门六项功能的可用性。
 
 ### 环境变量
 
@@ -143,7 +143,8 @@ python scripts/icon-sync.py --apply --only <软件id>
 | `SUBMIT_MAX_PER_DAY` | `6` | 每设备每日投稿上限 |
 | `SUBMIT_MAX_PENDING` | `3` | 每设备待审核投稿上限 |
 | `SUBMIT_REQUIRE_SOURCE` | `true` | 是否要求投稿提供来源 |
-| `SIGN_PER_IP_PER_DAY` / `SIGN_GLOBAL_PER_DAY` | `20` / `3000` | 加速签名限额 |
+| `SIGN_PER_IP_PER_DAY` / `SIGN_GLOBAL_PER_DAY` | `20` / `3000` | 加速签名次数限额 |
+| `SIGN_GLOBAL_BYTES_PER_DAY` | `21474836480`（20 GiB） | 加速签名每日流量上限 |
 | `PURGE_TOKEN` | 无 | 管理接口令牌（请求头 `X-Purge-Token`） |
 | `ALLOWED_ORIGIN` | `*` | CORS 允许来源 |
 
@@ -166,13 +167,13 @@ python scripts/icon-sync.py --apply --only <软件id>
 
 | 接口 | 方法 | 用途 |
 | --- | --- | --- |
-| `/api/purge` | POST | 删除指定对象（可按 `onlyRegistry` 只删登记） |
+| `/api/purge` | POST | 删除指定对象；传 `requireRegistry: true` 时拒绝删除不在登记表中的对象 |
 | `/api/files` | GET | 列出登记的文件 |
 | `/api/dl-stats` | GET | 下载统计、模式、限额与上次 GC |
 | `/api/link` | POST | 生成对象访问链接 |
 | `/api/promote` | POST | 将临时对象转为正式对象 |
-| `/api/gc` | POST | 手动触发垃圾回收（支持 `dry` 预览） |
-| `/api/registry-sync` | POST | 同步 OSS 与本地登记表 |
+| `/api/gc` | POST | 手动触发垃圾回收；默认 `dry` 预览，传 `{"dry": false}` 才真正删除 |
+| `/api/registry-sync` | POST | 同步 OSS 与本地登记表；默认 `dry` 预览，传 `{"dry": false}` 才写入 |
 | `/api/dl-mode` | GET / POST | 查看 / 修改下载模式与限额 |
 | `/api/oss-check` | GET | 探测对象是否可通过公网访问 |
 
@@ -185,7 +186,7 @@ python scripts/icon-sync.py --apply --only <软件id>
 - 超过 `GC_ORPHAN_MINUTES` 仍无登记对象的孤儿文件
 - 超过 `GC_STALE_RECORD_HOURS` 的失效登记记录
 
-手动排查可先 `POST /api/gc` 带 `{"dry": true}` 预览，再正式执行。
+手动排查时 `POST /api/gc` 默认就是预览（`dry` 不为 `false` 即只报告不删除）；确认无误后再带 `{"dry": false}` 正式执行。
 
 ## 版本自动核对
 
@@ -193,7 +194,7 @@ python scripts/icon-sync.py --apply --only <软件id>
 
 判定原则为**全有或全无**：版本号与下载直链是一个整体，只要有一处无法处理就不做任何修改。
 
-脚本无法确定的条目汇总为「软件信息体检 · 待人工确认」Issue，每条提供三个复选框：重新检测、本次跳过、永久忽略（或评论 `/ignore 软件id`）。
+脚本无法确定的条目汇总为「软件信息体检报告 · 待人工处理」Issue，每条提供三个复选框：`已改好 → 重新检测`、`本次跳过`、`不用跟进`（也可评论 `/ignore 软件id` 永久忽略）。
 
 ```bash
 # 仅检查，不修改任何文件
@@ -231,7 +232,7 @@ node scripts/update-ignore.mjs --list
 | 软件数据 | 已在 git 版本控制中，通过提交历史回溯 | `git show <父提交>:软件数据/apps/<id>.json` |
 | 站点文字 | 同上 | 同上 |
 | 后端配置 | 记录 EdgeOne 环境变量清单（密钥另存密码库） | 在控制台重新配置 |
-| 后端状态 | 状态存储由 EdgeOne Blob 托管；对象在 OSS | 通过 `/api/registry-sync` 重建登记表 |
+| 后端状态 | 状态存储由 EdgeOne Blob 托管；对象在 OSS | 先 `POST /api/registry-sync` 预览，确认后带 `{"dry": false}` 重建登记表 |
 | 桌面端用户设置 | 复制 `%LOCALAPPDATA%\ClassSoftwareHub\` 目录 | 粘贴回原路径 |
 | 桌面端内容缓存 | 删除后重启可重新同步，无需专门备份 | — |
 | 桌面端日志 | 复制 `%LOCALAPPDATA%\ClassSoftwareHub\logs\` | — |

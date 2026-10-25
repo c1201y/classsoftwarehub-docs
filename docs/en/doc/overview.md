@@ -63,14 +63,14 @@ graph LR
     C -->|"submit / feedback / accelerated signing"| API
     API -->|"writes submissions/*.json"| A
     API -->|"presigned upload / ticketed download"| OSS["Aliyun OSS<br/>private bucket"]
-    API -->|"intranet relay"| ECS["ECS relay<br/>8.159.148.101:8091"]
+    API -->|"intranet relay"| ECS["ECS relay<br/>:8091"]
     ECS --> OSS
 ```
 
 Software data still has a single authoritative source: `软件数据/apps/*.json` in the web repository. The backend only provides dynamic capabilities — submission inbox, feedback, echo cave, OSS upload signing, download tickets and GitHub acceleration signing. It stores no catalogue content.
 
-::: info No bundled content
-Neither desktop build ships a content pack (the Win10 build dropped its built-in copy in 1.2.0). The first launch must be online and reads `软件数据/apps/*.json` straight from the public GitHub repository. If upstream removes a title, the local cache is deleted too, so delisted software cannot come back.
+::: info No bundled software data
+Neither desktop build bundles software data (the Win10 build dropped its built-in copy in 1.1.1). The first launch must be online and reads `软件数据/apps/*.json` straight from the public GitHub repository. The Windows 7 build still ships the system-image site list and icons as an offline fallback, but no software catalogue. If upstream removes a title, the local cache is deleted too, so delisted software cannot come back.
 :::
 
 ## Downloads and acceleration
@@ -88,7 +88,7 @@ Neither desktop build ships a content pack (the Win10 build dropped its built-in
 
 ## Getting help
 
-- Site: [classsoftwarehub.us.ci](https://classsoftwarehub.us.ci)
-- Mirror: [classsoftwarehub.132614.xyz](https://classsoftwarehub.132614.xyz)
+- Site: [classsoftwarehub.cn](https://classsoftwarehub.cn)
+- Mirrors: [classsoftwarehub.132614.xyz](https://classsoftwarehub.132614.xyz), [classsoftwarehub.xfane.com](https://classsoftwarehub.xfane.com)
 - Issues: [GitHub Issues](https://github.com/c1201y/ClassSoftwareHub/issues)
 - QQ group: 487903798

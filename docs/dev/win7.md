@@ -66,7 +66,7 @@ Windows 7 兼容版的核心策略是**逐文件等价移植**，而非重新设
 | `ItemsRepeater` | `Avalonia.Controls.ItemsControl` + `ItemsPanel` | — |
 | `GridView` / `ListView` | `Avalonia.Controls.ListBox` | 配 `ItemsPanel` 改横向 / 换行 |
 | `Window.SystemBackdrop` | `Platform.Backdrop.Apply(win, root, prefer)` | — |
-| `ExtendsContentIntoTitleBar` + `SetTitleBar` | `ExtendClientAreaToDecorationsHint` + 相关 hint | Win7 上更稳的做法是保留系统边框 |
+| `ExtendsContentIntoTitleBar` + `SetTitleBar` | 自绘窗口框架（`src/Core/SelfDrawnFrame.cs`） | 48dip 自绘标题栏，同时保留系统拖拽缩放、Aero 吸附与双击最大化 |
 
 ### 类型 / 基础设施
 
@@ -88,7 +88,7 @@ Windows 7 兼容版的核心策略是**逐文件等价移植**，而非重新设
 | --- | --- | --- | --- |
 | 背景材质 | 云母 / 亚克力 | Aero 毛玻璃 / 纯色 | `Platform.Backdrop` 自动分级降级；DWM 合成关闭时一律纯色 |
 | 图标字体 | Segoe MDL2 Assets / Segoe Fluent Icons | 无 | 内嵌字体 `Assets/Fonts/CshSymbols.ttf`（族名 `CshSymbols`，挂在 `SymbolThemeFontFamily`），91 个 MDL2 码位重映射 |
-| 截屏 | `Windows.Graphics.Capture` | 无 | GDI `BitBlt`（`NativeMethods` 已备好 `CreateCompatibleDC` / `CreateCompatibleBitmap` / `BitBlt`） |
+| 截屏 | Win32 GDI `BitBlt` | Win32 GDI `BitBlt` | 两版同源；原版本就未使用 `Windows.Graphics.Capture` |
 | WebView2 | 运行时不受限 | 运行时止于 109.0.1518.x | SDK 锁 `1.0.1587.40`；探不到运行时时走「用浏览器打开」降级路径 |
 | 渲染 | GPU | 默认软件渲染 | 见下 |
 
@@ -101,9 +101,9 @@ Windows 7（含 `--simulate-win7`）**默认直接走软件渲染**，帧缓冲�
 - **现象**：Win7 抽号页出现位置随机的浅灰矩形残影，每帧形状不同。
 - **根因**：Avalonia 组合渲染默认按脏矩形局部重绘，其余像素依赖渲染表面「保住上一帧」。Win7 老显卡（WGL / 老 Intel ICD）的表面保帧不可靠，未重绘区域会露出上一帧残留或随机垃圾像素。
 - **中间方案无效**：`CompositionOptions.UseSaveLayerRootClip`（脏区先画进中间表面再合成）只解决 saveLayer 裁剪一类问题，不改变对表面保帧的依赖，2026-10-09 真机复核确认单独启用无效。
-- **处置**：Win7 默认软件渲染，随机灰矩形从机制上不可能出现；需要验证 GPU 路径时加 `--gpu-render` 临时放行降级链（此时仍带 `UseSaveLayerRootClip`）。软件渲染对「大部分时间静止」的界面开销可接受；WebView2 独立进程渲染，不受影响（`src/Program.cs:70-82`）。
+- **处置**：Win7 默认软件渲染，随机灰矩形从机制上不可能出现；需要验证 GPU 路径时加 `--gpu-render` 临时放行降级链（此时仍带 `UseSaveLayerRootClip`）。软件渲染对「大部分时间静止」的界面开销可接受；WebView2 独立进程渲染，不受影响（`src/Program.cs:81-93`）。
 
-注册 `UseSaveLayerRootClip` 需走反射：`AvaloniaLocator.CurrentMutable` 在 NuGet 的 ref 程序集里被裁掉（编译期不可见，运行时仍全量公开）。注册结果记录到 `RenderFixVerified`，排障时必须能分辨「没注册上」和「注册了但对该机器不够」两种情况（`src/Program.cs:84-100`）。
+注册 `UseSaveLayerRootClip` 需走反射：`AvaloniaLocator.CurrentMutable` 在 NuGet 的 ref 程序集里被裁掉（编译期不可见，运行时仍全量公开）。注册结果记录到 `RenderFixVerified`，排障时必须能分辨「没注册上」和「注册了但对该机器不够」两种情况（`src/Program.cs:95-118`）。
 
 ## 启动加速
 

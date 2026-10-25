@@ -24,7 +24,7 @@ export default defineThemeConfig({
     },
     author: {
       name: 'ClassSoftwareHub',
-      url: 'https://classsoftwarehub.us.ci'
+      url: 'https://classsoftwarehub.cn'
     },
     creation: 'original'
   },
@@ -40,7 +40,7 @@ export default defineThemeConfig({
       collections: zhcollections,
       footer: {
         message: '由 <a target="_blank" href="https://v2.vuepress.vuejs.org/">VuePress</a> & <a target="_blank" href="https://theme-plume.vuejs.press">vuepress-theme-plume</a> 驱动',
-        copyright: `© 2026-${currentYear} <a href="https://classsoftwarehub.us.ci">ClassSoftwareHub</a> | 采用 <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a> 许可协议 · 文档站架构参考 <a href="https://github.com/SECTL/SecRandom-docs">SECTL/SecRandom-docs</a>`,
+        copyright: `© 2026-${currentYear} <a href="https://classsoftwarehub.cn">ClassSoftwareHub</a> | 采用 <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a> 许可协议 · 文档站架构参考 <a href="https://github.com/SECTL/SecRandom-docs">SECTL/SecRandom-docs</a>`,
       },
     },
     '/en/': {
@@ -48,7 +48,7 @@ export default defineThemeConfig({
       collections: encollections,
       footer: {
         message: 'Powered by <a target="_blank" href="https://v2.vuepress.vuejs.org/">VuePress</a> & <a target="_blank" href="https://theme-plume.vuejs.press">vuepress-theme-plume</a>',
-        copyright: `© 2026-${currentYear} <a href="https://classsoftwarehub.us.ci">ClassSoftwareHub</a>, licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a> · site architecture adapted from <a href="https://github.com/SECTL/SecRandom-docs">SECTL/SecRandom-docs</a>`,
+        copyright: `© 2026-${currentYear} <a href="https://classsoftwarehub.cn">ClassSoftwareHub</a>, licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a> · site architecture adapted from <a href="https://github.com/SECTL/SecRandom-docs">SECTL/SecRandom-docs</a>`,
       },
     },
   },

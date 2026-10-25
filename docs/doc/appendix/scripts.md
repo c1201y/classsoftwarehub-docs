@@ -31,7 +31,6 @@ createTime: 2026/10/19 20:00:00
 | --- | --- | --- |
 | `pack-win7-portable.ps1` | PowerShell | 组装便携版；参数 `-AppDir` `-LauncherDir` `-Version` `-OutRoot` `-Zip` |
 | `publish-release-win7.mjs` | Node.js | 发版；参数 `--version` `--channel` `--installer` `--portable` `--notes` `--dry-run` |
-| `sync-legal.mjs` | Node.js | 从站点 `法律文本.ts` 生成安装器 `Legal.rtf` 与桌面端条款 |
 | `package-tests/` | C# | 打包相关测试工程 |
 
 ## package.json 脚本（网页端）

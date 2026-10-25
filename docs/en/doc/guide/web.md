@@ -9,12 +9,10 @@ createTime: 2026/10/19 20:00:00
 
 | Entry | Address |
 | --- | --- |
-| Main site | `https://classsoftwarehub.us.ci` |
-| Mirror | `https://classsoftwarehub.132614.xyz` |
+| Main site | `https://classsoftwarehub.cn` |
+| Mirrors | `https://classsoftwarehub.132614.xyz`, `https://classsoftwarehub.xfane.com` |
 
-The mirror is usually faster, but users in northern and western Fujian may find it unreachable. The site is also mirrored to GitHub Pages and FTP, plus a netdisk copy.
-
-The web site is a pure static site. **No account is required** to browse or download. A single-file build (~2 MB) can be opened offline by double-clicking, with the same features as the online version.
+The site is deployed to GitHub Pages, an FTP mirror, and a netdisk (WebDAV) copy. If a mirror is unreachable because of regional network issues, use the main site. It is a static site, so browsing and downloading require **no account**. The repository also provides `npm run build:single` to generate a ~2 MB single-file HTML for offline use; the live deployment uses the multi-file build.
 
 ## Accounts
 
@@ -85,7 +83,7 @@ Browsing and downloading need no account. If the backend is unavailable, the sta
 
 1. Go to the "Submit software" page (`#/submit`).
 2. Fill it in directly, or use "Import from GitHub" to auto-fill repository information.
-3. Fill in the required fields: `id`, `name`, `category`, `tagline`, `description`, `system`, a contact, and at least one direct file link.
+3. Fill in the required fields: `id`, `name`, `category`, `tagline`, `description`, `system`, a contact, and at least one download item (a direct file link, an official download page or a netdisk page).
 4. Optionally add a checksum; `MD5:` prefixes and byte-separated forms are accepted.
 5. After submitting, it enters the review queue; a maintainer labels the issue `approved` to merge and publish.
 
@@ -105,7 +103,7 @@ The web site has no user-level server authorization; submissions are validated b
 | Symptom | Cause | Resolution |
 | --- | --- | --- |
 | Red bar at the top of the page | A software JSON file is malformed | That file is skipped and the rest render normally. Report the file name and line number to a maintainer |
-| Detail page says "software not found" | 5 historical `id` values contained `?` `&` `=` | Already fixed; report the exact URL if it still happens |
+| Detail page says "software not found" | Some historical `id` values contained `?` `&` `=` | Already fixed; report the exact URL if it still happens |
 | Clicking "Download" does nothing | The entry is a vendor page or netdisk link; the button reads "前往官网" or "前往网盘" | Check the button label and description |
 | Icon shows a first-letter placeholder | The `icon` field is empty or the image failed to load | Does not affect downloads; report it so a maintainer can add an icon |
 | Accelerated link has expired | Self-hosted signed links live for about 15 minutes | Reload the page to get new links, or pick another source |

@@ -8,7 +8,7 @@ pageLayout: page
 ## Development team
 
 <CardGrid :cols="{ sm: 1, md: 2, lg: 2 }" class="container">
-    <LinkCard title="cyan1201" href="https://github.com/c1201y">
+    <LinkCard title="椰汁" href="https://github.com/c1201y">
         <p class="role">Web build & maintenance<br>Windows 7 build<br>Documentation & releases</p>
     </LinkCard>
     <LinkCard title="Tiny-Nick" href="https://space.bilibili.com/1274920807">
@@ -31,7 +31,7 @@ The following teachers and students support the project beyond development. See 
 | 开心的阿罗娜 (QQ community member) | Sponsored desktop development and website hosting |
 | Xr080606 | Sponsored desktop development and website hosting |
 
-Team roles and credits stay in sync with the "Credits" card below "About" in the web app's settings. To contribute or report an issue, read the [contribution guide](./dev/contribute.md).
+Team roles and credits stay in sync with the "Credits" card below "About" in the web app's settings. To contribute or report an issue, read the [contribution guide](/dev/contribute).
 
 <VPComment class="comment" />
 

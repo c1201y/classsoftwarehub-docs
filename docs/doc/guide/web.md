@@ -9,10 +9,10 @@ createTime: 2026/10/19 20:00:00
 
 | 入口 | 地址 |
 | --- | --- |
-| 主站 | `https://classsoftwarehub.us.ci` |
-| 备用站点 | `https://classsoftwarehub.132614.xyz` |
+| 主站 | `https://classsoftwarehub.cn` |
+| 备用站点 | `https://classsoftwarehub.132614.xyz`、`https://classsoftwarehub.xfane.com` |
 
-站点同时提供 GitHub Pages 与 FTP 镜像，以及网盘副本。网页端为纯静态站点，**无需注册账号**即可浏览与下载；单文件版本（约 2 MB）可离线双击打开，功能与在线版一致。
+站点同时部署到 GitHub Pages、FTP 镜像与网盘副本。网页端为纯静态站点，**无需注册账号**即可浏览与下载。仓库另提供 `npm run build:single`，可在本地生成约 2 MB 的单文件 HTML 供离线打开；线上部署使用的是多文件构建。
 
 ## 登录与账号
 
@@ -83,7 +83,7 @@ createTime: 2026/10/19 20:00:00
 
 1. 进入「提交软件」页（`#/submit`）。
 2. 可直接填写，或使用「从 GitHub 一键读取」自动填充仓库信息。
-3. 填写必填项：`id`、`name`、`category`、`tagline`、`description`、`system`、联系方式，以及至少一条文件直链。
+3. 填写必填项：`id`、`name`、`category`、`tagline`、`description`、`system`、联系方式，以及至少一条下载项（文件直链、官网下载页或网盘页均可）。
 4. 可选填写校验值，支持带 `MD5:` 前缀或按字节分隔的写法。
 5. 提交后进入审核队列；维护者在 Issue 上标注 `approved` 后合并发布。
 

@@ -811,7 +811,7 @@ watch(selectedChannel, () => {
 
       <section class="web-links">
         <span class="web-links-label">{{ t.webTitle }}</span>
-        <a href="https://classsoftwarehub.us.ci" target="_blank" rel="noopener">
+        <a href="https://classsoftwarehub.cn" target="_blank" rel="noopener">
           <DlIcon name="globe" />
           {{ t.webMain }}
         </a>

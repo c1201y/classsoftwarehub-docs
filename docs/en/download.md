@@ -12,10 +12,10 @@ The web site is online, no download needed:
 
 | Entry | Address |
 | --- | --- |
-| Main site | `https://classsoftwarehub.us.ci` |
-| Mirror | `https://classsoftwarehub.132614.xyz` |
+| Main site | `https://classsoftwarehub.cn` |
+| Mirrors | `https://classsoftwarehub.132614.xyz`, `https://classsoftwarehub.xfane.com` |
 
-For offline use, a single-file build (~2 MB) is available from the releases page; double-click it in a browser and it works the same as the online version.
+The web site does not publish an offline bundle with its releases. To use it offline, run `npm run build:single` in the source repository to generate a single-file HTML (~2 MB) that opens directly in a browser; the live deployment uses the regular multi-file build (`npm run build`).
 
 ## Desktop
 
@@ -25,7 +25,7 @@ The two desktop editions release independently. Get them from their own GitHub R
 | --- | --- | --- | --- |
 | Desktop (Win10 / 11) | Installer | `ClassSoftwareHub-Setup-dv<version>.exe` | Per-user install to `%LOCALAPPDATA%\Programs\ClassSoftwareHub`, with Start-menu / desktop shortcuts and an uninstall entry |
 | Windows 7 edition | Installer | `ClassSoftwareHub-Setup-win7-dv<version>.exe` | Installs to `%LOCALAPPDATA%\Programs\ClassSoftwareHub-Win7` by default |
-| Windows 7 edition | Portable | `ClassSoftwareHub-Portable-win7-dv<version>.zip` | Unzip and run; writes no registry entries |
+| Windows 7 edition | Portable | `ClassSoftwareHub-Portable-win7-dv<version>.zip` | Unzip and run; does not write an uninstall registry entry (settings and cache still live under `%LOCALAPPDATA%\ClassSoftwareHub`) |
 
 The Desktop (Win10 / 11) edition ships an installer only. The two editions use different install directories and identities, so they can coexist. Each package ships a matching `.md5`; verify integrity after downloading.
 

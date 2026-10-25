@@ -47,6 +47,7 @@ createTime: 2026/10/19 20:00:00
 | `github` | string | 否 | GitHub 仓库地址（只填仓库地址） |
 | `notice` | string | 否 | 详情页下载区上方蓝色提示条 |
 | `store` | string | 否 | 商店链接 |
+| `platforms` | string[] | 否 | 平台筛选键数组（取 `platforms.json` 的 key）；仅用于筛选，页面展示仍用 `system` 原文 |
 | `downloads` | array | 是 | 下载项数组 |
 | `sort` | number | 否 | 显示顺序，越小越靠前 |
 | `维护备注` | string | 否 | 维护者备注，网页不显示 |
@@ -98,7 +99,7 @@ createTime: 2026/10/19 20:00:00
 | `_提交时间` | 由服务端写入 |
 | `_原始ID冲突` | 由服务端写入 |
 | `_联系方式` | age 密文 |
-| `_类型` | 草稿类型标记（应用 / `回声洞` / `反馈`） |
+| `_类型` | 草稿类型标记；仅回声洞（`回声洞`）与反馈（`反馈`）草稿带此键，软件草稿不带 |
 
 **约定：`_` 前缀键 = 仅审核用。** 合并时全部剥除。
 
@@ -108,4 +109,4 @@ createTime: 2026/10/19 20:00:00
 
 **Windows 7（`ClassSoftwareHub-windows7`）** `src/Data/` 下：`SoftwareApp`、`DownloadCategory`、`DataIssue`、`MirrorInfo`、`UiText`、`ToolDef`、`SidebarModule`、`DownloadLinkKind`、`NameRoster`、`PickNumberConfig`、`MessageConfig`、`AutoShutdown`、`ExperimentalFeature`、`Feedback`、`EasiNoteGuard`、`ProcessGuard`、`LegalDocs`、`SearchIndex`、`ClockPresets`、`ClockSettings`。
 
-两个桌面端 `ContentStore` 的解析逻辑与网页端 `src/gallery/data/index.ts` 保持一致：逐文件容错解析 → 坏文件跳过并记 `DataIssue` → 必填 `id`/`name` 校验 → `id` 重复跳过 → 按 `sort` 排序 → 分类读取（坏了就从软件里现推）。1.2.0 起上游删除的文件会同步删除本地缓存；仅当目录列表疑似被截断时保留，避免误删。
+两个桌面端 `ContentStore` 的解析逻辑与网页端 `src/gallery/data/index.ts` 保持一致：逐文件容错解析 → 坏文件跳过并记 `DataIssue` → 必填 `id`/`name` 校验 → `id` 重复跳过 → 按 `sort` 排序 → 分类读取（坏了就从软件里现推）。1.1.1 起上游删除的文件会同步删除本地缓存；仅当目录列表疑似被截断时保留，避免误删。

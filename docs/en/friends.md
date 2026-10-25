@@ -31,11 +31,11 @@ The site architecture of this documentation (VuePress 2 + vuepress-theme-plume, 
 
 | Link | Address |
 | --- | --- |
-| Main site | `https://classsoftwarehub.us.ci` |
-| Mirror | `https://classsoftwarehub.132614.xyz` |
+| Main site | `https://classsoftwarehub.cn` |
+| Mirrors | `https://classsoftwarehub.132614.xyz`, `https://classsoftwarehub.xfane.com` |
 | Web repository | `https://github.com/c1201y/ClassSoftwareHub` |
 | Windows 7 build repository | `https://github.com/c1201y/ClassSoftwareHub-windows7` |
 | WinUI 3 desktop repository | `https://github.com/c1201y/ClassSoftwareHub-Desktop` |
 | Issues | `https://github.com/c1201y/ClassSoftwareHub/issues` |
 | QQ group | 487903798 |
-| Support the author | `https://afdian.com/a/cyan1201` |
+| Support the author | `https://ifdian.net/a/TinyNickCSHub` |

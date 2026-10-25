@@ -14,16 +14,17 @@ createTime: 2026/10/19 20:00:00
 | `create-review-issue.yml` | push（`submissions/` 有变化） | 把提交草稿转为带标签的 Issue；反馈类草稿在建完 Issue 后删除 |
 | `review-submission.yml` | Issue 打标签 | 合并草稿到 `软件数据/apps/` 或 `回声洞/messages/`，或删除草稿；结束主动派发 `deploy.yml` |
 | `update-ignore-command.yml` | Issue 编辑、评论 | 处理体检 Issue 的复选框与 `/ignore` `/unignore` 命令 |
+| `oss-audit.yml` | 每 6 小时、手动 | 对比 OSS 桶内对象与仓库引用，发现断链即失败告警；区分断链与真孤儿 |
 
 ### 关键约束
 
-1. **`GITHUB_TOKEN` 推送不触发其他工作流**（GitHub 防递归规则），因此 `review-submission.yml` 与 `check-updates.yml` 写回后必须**主动派发** `deploy.yml`（`AGENTS.md:332-335`、`605-606`）。
-2. **`review-submission.yml` 必须用 `concurrency: { group: review-submission, queue: max }`**：不要换成 `cancel-in-progress: false`（那只保留「1 running + 1 pending」，新 pending 会顶掉旧的，批量评审会静默丢失条目）（`AGENTS.md:468-472`）。
-3. **`create-review-issue.yml` 必须用事件自带的 `before` / `after` SHA 计算 diff 范围**：不要回到 `git diff HEAD~1 HEAD`（checkout 落在那一刻拉到的 tip，两次相近的推送会重复建票或一个都不建），因此 `fetch-depth: 0` 必需（`AGENTS.md:473-476`）。
-4. **幂等键必须基于草稿文件路径，不能基于 Issue 标题**：历史上向日葵远程的第二次提交因标题与已关闭的旧 Issue 相同而被静默跳过，草稿永远留在 `submissions/` 而提交者收到「提交成功」（`AGENTS.md:312-318`）。
+1. **`GITHUB_TOKEN` 推送不触发其他工作流**（GitHub 防递归规则），因此 `review-submission.yml` 与 `check-updates.yml` 写回后必须**主动派发** `deploy.yml`。
+2. **`review-submission.yml` 必须用 `concurrency: { group: review-submission, queue: max }`**：不要换成 `cancel-in-progress: false`（那只保留「1 running + 1 pending」，新 pending 会顶掉旧的，批量评审会静默丢失条目）。
+3. **`create-review-issue.yml` 必须用事件自带的 `before` / `after` SHA 计算 diff 范围**：不要回到 `git diff HEAD~1 HEAD`（checkout 落在那一刻拉到的 tip，两次相近的推送会重复建票或一个都不建），因此 `fetch-depth: 0` 必需。
+4. **幂等键必须基于草稿文件路径，不能基于 Issue 标题**：历史上向日葵远程的第二次提交因标题与已关闭的旧 Issue 相同而被静默跳过，草稿永远留在 `submissions/` 而提交者收到「提交成功」。
 5. **`deploy.yml` 的 `concurrency.cancel-in-progress` 必须为 `false`**：一次部署要往三个目标发布，中途取消会留下「Pages 是新的、网盘还是旧的」半成品镜像且无任何报错（`.github/workflows/deploy.yml:13-22`）。
-6. **`index.html` 必须用相对路径引用资源**（`vite.config.ts` 的 `base: './'`），以适配根目录与子目录两种形态（`AGENTS.md:496-501`）。
-7. **行结尾必须保持原样**：`check-updates.mjs` 逐个重写 JSON 文件以保留原始行结尾（`AGENTS.md:607`）。
+6. **`index.html` 必须用相对路径引用资源**（`vite.config.ts` 的 `base: './'`），以适配根目录与子目录两种形态。
+7. **行结尾必须保持原样**：`scripts/check-updates.mjs` 逐个重写 JSON 文件以保留原始行结尾。
 
 ## 桌面端（Win10）发布
 
@@ -106,7 +107,7 @@ node tools\publish-release-win7.mjs `
 
 - 对外版本号 `X.Y.Z` + 代号后缀（保留，如 `- Autumn`）：X = 大版本（底层架构 / UI 大改动），Y = 功能更新，Z = 小修小补。
 - 内部版本号 `AAAABBCCPRDD`（年 / 月 / 日 / 文件版次），例 `20260915PR01`。
-- 需同步修改：`文字设置.ts` 的 `app.version`、`home.subtitle`、`welcome.intro`（3 处）；`src/gallery/Strings/en-US/Resources.ts` 的 `app.version`；`package.json` 的 `version`（裸 `2.3.4`，无代号 / 内部号）与 `package-lock.json` 顶部两个 `version` 字段。
+- 需同步修改：`文字设置.ts` 的 `app.version`、`home.subtitle`、`welcome.intro`（3 处）；`src/gallery/Strings/en-US/Resources.ts` 的 `app.version`；`package.json` 的 `version`（裸 `2.3.5`，无代号 / 内部号）与 `package-lock.json` 顶部两个 `version` 字段。
 - Release tag 命名 `vX.Y.Z-<codename>`。
 
 ### 桌面端（Win10 / Win7 共用规则）

@@ -13,7 +13,7 @@ createTime: 2026/10/19 20:00:00
 | 包管理器 | npm（CI 使用 `npm ci`） | `.github/workflows/deploy.yml:40` |
 | 构建工具 | Vite 8 | `package.json:33` |
 | 类型检查 | vue-tsc 3.2.6 + TypeScript ~6.0 | `package.json:31,34` |
-| Python | 运行 `scripts/icon-sync.py` 与 `scripts/upload-webdav.py` 需要 Python 3 + Pillow | `AGENTS.md:211-218` |
+| Python | 运行 `scripts/icon-sync.py` 与 `scripts/upload-webdav.py` 需要 Python 3 + Pillow | 脚本源码 |
 | 后端 | 无需自建；开发时调用线上 `https://api.classsoftwarehub.cn` | `src/gallery/submitEndpoints.ts` |
 
 ## 桌面端（Win10）
@@ -35,10 +35,10 @@ createTime: 2026/10/19 20:00:00
 | 项目 | 要求 | 依据 |
 | --- | --- | --- |
 | .NET SDK | 6.0（`dotnet --version` 应为 6.x） | `BUILDING.md:7` |
-| 目标框架 | `net6.0-windows7.0`，RID `win-x64` | `src/ClassSoftwareHub.Win7.csproj:19,26` |
+| 目标框架 | `net6.0-windows7.0`，RID `win-x64` | `src/ClassSoftwareHub.Win7.csproj:20,27` |
 | 构建平台 | Windows x64 | `BUILDING.md:8` |
 | 安装包 | Inno Setup 6 | `BUILDING.md:9` |
-| C# 语言版本 | 10（.NET 6 SDK 上限） | `src/ClassSoftwareHub.Win7.csproj:30` |
+| C# 语言版本 | 10（.NET 6 SDK 上限） | `src/ClassSoftwareHub.Win7.csproj:31` |
 | 发版脚本 | Node.js（运行 `tools/publish-release-win7.mjs`） | `BUILDING.md:89` |
 | 目标机 .NET 运行时 | **不需要**。应用为自包含发布 | `installer/ClassSoftwareHub-Win7.iss:107` |
 | 目标机 WebView2 运行时 | 可选，最高 109.0.1518.x | `src/PORTING.md:198-200` |

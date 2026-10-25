@@ -9,12 +9,12 @@ createTime: 2026/10/19 20:00:00
 
 | 术语 | 定义 |
 | --- | --- |
-| 网页端 | `ClassSoftwareHub` 仓库，Vue 3 + Vite + TypeScript 实现的纯静态站点，部署于 `https://classsoftwarehub.us.ci` |
+| 网页端 | `ClassSoftwareHub` 仓库，Vue 3 + Vite + TypeScript 实现的纯静态站点，部署于 `https://classsoftwarehub.cn` |
 | 桌面端（WinUI 3 原版） | `ClassSoftwareHub-Desktop` 仓库，基于 WinUI 3 + .NET 10 + Windows App SDK 2.5 的桌面客户端，系统底线为 Windows 10 1809 |
 | Windows 7 兼容版 | `ClassSoftwareHub-windows7` 仓库（代号 `csh-win7`），以 Avalonia 11.2.8 + .NET 6 重写 UI 层的桌面客户端，系统底线为 Windows 7 SP1 |
 | 后端 | `csh-api` 仓库，部署于腾讯 EdgeOne Pages Functions，对外域名 `https://api.classsoftwarehub.cn`，承担提交、反馈、回声洞、签名、下载票据与公告 |
 | 软件数据 | 网页端 `软件数据/apps/*.json` 中逐软件维护的结构化记录，是网页端与桌面端共用的唯一数据源 |
-| 体检 Issue | 「软件信息体检 · 待人工确认」Issue，汇总脚本无法自动处理的软件条目 |
+| 体检 Issue | 「软件信息体检报告 · 待人工处理」Issue，汇总脚本无法自动处理的软件条目 |
 | 回声洞 | 设置页中逐条显示群友投稿并逐字打出的互动组件 |
 | 覆盖已存在 | 审核标签之一，表示用本次提交整份替换站内已存在的同名软件数据 |
 
@@ -23,7 +23,7 @@ createTime: 2026/10/19 20:00:00
 | 术语 | 定义 |
 | --- | --- |
 | 安装版 | 通过安装程序部署、带开始菜单 / 桌面快捷方式与卸载项的发行形态 |
-| 便携版 | 解压即用、不写注册表的发行形态 |
+| 便携版 | 解压即用、不写卸载注册项的发行形态 |
 | 单文件构建 | 将整站打包为一个 HTML 文件的构建模式，可离线双击打开 |
 | 自包含发布 | 将 .NET 运行时一并打包的发布方式，目标机无需单独安装运行时 |
 | 提权助手模式 | 桌面端以 `runas` 启动自身的一个无界面实例执行需管理员权限操作的机制 |
@@ -39,7 +39,7 @@ createTime: 2026/10/19 20:00:00
 | CshSymbols | Windows 7 兼容版内嵌的图标字体，将 Segoe MDL2 Assets 码位重映射，族名为 `CshSymbols` |
 | DWM | Desktop Window Manager，Windows 桌面合成器；Win7 上「毛玻璃」效果依赖其合成开关 |
 | FluentAvaloniaUI | Avalonia 的 Fluent 风格控件库，提供 NavigationView、InfoBar、NumberBox 等控件 |
-| GDI | Windows 图形设备接口；Win7 无 `Windows.Graphics.Capture`，截屏改走 GDI `BitBlt` |
+| GDI | Windows 图形设备接口；两版截屏都走 GDI `BitBlt`，不依赖 `Windows.Graphics.Capture` |
 | hash 路由 | 使用 URL fragment（`#`）表示路由的 SPA 路由方式；文档路径不变，便于同一份产物部署在不同深度 |
 | Inno Setup | Windows 安装包制作工具，本项目用于编译安装版 |
 | MDL2 Assets | Segoe MDL2 Assets 图标字体，WinUI 应用常用的图标码位来源 |
