@@ -33,12 +33,18 @@ export default {
     teamMembers() {
       if (this.lang === 'en') {
         return [
-          "cyan1201 (Design & Engineering & Maintenance & Documentation)",
+          "cyan1201 (Web build & maintenance, Windows 7 build, docs)",
+          "Tiny-Nick (Early web build, Windows desktop development)",
+          "凭舟吟 (GitHub acceleration nodes, OSS & servers)",
+          "HelloCHLdev (Linux cross-platform desktop development)",
           "SecRandom docs team (site architecture reference)"
         ];
       } else {
         return [
-          "椰汁 cyan1201（设计 & 开发 & 维护 & 文档）",
+          "椰汁（网站搭建 & 维护 & Win7 兼容版 & 文档）",
+          "Tiny-Nick（前期网站制作 & Windows 桌面端）",
+          "凭舟吟（GitHub 加速节点 & OSS & 服务器）",
+          "HelloCHLdev（Linux 跨平台桌面端）",
           "SecRandom 文档团队（文档站架构参考）"
         ];
       }

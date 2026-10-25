@@ -5,46 +5,38 @@ pageLayout: page
 
 <TeamCard lang="en" />
 
-<CardGrid class="container">
-    <LinkCard title="Author" href="https://github.com/c1201y">
-        <div class="card-content">
-            <div class="text-content">
-                <p class="name rainbow-name" id="rainbow-name">cyan1201</p>
-                <p class="role">Design & Engineering & Maintenance & Documentation</p>
-            </div>
-        </div>
+## Development team
+
+<CardGrid :cols="{ sm: 1, md: 2, lg: 2 }" class="container">
+    <LinkCard title="cyan1201" href="https://github.com/c1201y">
+        <p class="role">Web build & maintenance<br>Windows 7 build<br>Documentation & releases</p>
+    </LinkCard>
+    <LinkCard title="Tiny-Nick" href="https://space.bilibili.com/1274920807">
+        <p class="role">Early web build<br>Windows desktop<br>development</p>
+    </LinkCard>
+    <VPCard title="凭舟吟">
+        <p class="role">GitHub acceleration nodes<br>OSS bucket & servers<br>cn domain</p>
+    </VPCard>
+    <LinkCard title="HelloCHLdev" href="https://github.com/HelloCHLdev">
+        <p class="role">Linux (cross-platform)<br>desktop development</p>
     </LinkCard>
 </CardGrid>
+
+## Credits
+
+The following teachers and students support the project beyond development. See [Credits & License](./friends.md) for upstream components and licensing.
+
+| Name | Contribution |
+| --- | --- |
+| 开心的阿罗娜 (QQ community member) | Sponsored desktop development and website hosting |
+| Xr080606 | Sponsored desktop development and website hosting |
+
+Team roles and credits stay in sync with the "Credits" card below "About" in the web app's settings. To contribute or report an issue, read the [contribution guide](./dev/contribute.md).
 
 <VPComment class="comment" />
 
 <script setup>
-import { onMounted, onBeforeUnmount } from 'vue';
 import VPComment from '@theme/VPComment.vue'
-
-let animationId = null;
-
-// Speed control: hue change per frame (larger is faster)
-const HUE_STEP = 1;
-
-onMounted(() => {
-  const el = document.getElementById('rainbow-name');
-  if (!el) return;
-
-  let hue = 0;
-
-  function animate() {
-    el.style.color = `hsl(${hue}, 100%, 50%)`;
-    hue = (hue + HUE_STEP) % 360;
-    animationId = requestAnimationFrame(animate);
-  }
-
-  animate();
-});
-
-onBeforeUnmount(() => {
-  if (animationId) cancelAnimationFrame(animationId);
-});
 </script>
 
 <style scoped>
@@ -52,35 +44,13 @@ onBeforeUnmount(() => {
   max-width: 1000px;
   margin: 0 auto;
   justify-content: center;
-  padding: 30px 0;
-}
-
-.card-content {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.text-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.name {
-  font-size: 1.3em;
-  font-weight: 600;
-  margin: 0;
-  transition: color 0.08s linear;
-}
-
-.rainbow-name {
-  color: hsl(0, 100%, 50%);
+  padding: 10px 0 0;
 }
 
 .role {
-  font-size: 1em;
+  font-size: 0.95em;
   font-weight: 500;
+  line-height: 1.6;
   color: var(--vp-c-text-2);
   margin: 0;
 }
@@ -88,7 +58,7 @@ onBeforeUnmount(() => {
 .comment {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 0 0 2rem;
+  padding: 2rem 0;
 }
 
 @media (max-width: 768px) {

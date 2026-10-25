@@ -135,6 +135,54 @@
   max-width: 175px !important;
 }
 
+/* team */
+.vp-page .vp-doc > h2,
+.vp-page .vp-doc > p,
+.vp-page .vp-doc > table {
+  width: min(1000px, calc(100% - 30px));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@keyframes team-rainbow {
+  0% { color: hsl(0, 100%, 50%); }
+  17% { color: hsl(60, 100%, 50%); }
+  33% { color: hsl(120, 100%, 50%); }
+  50% { color: hsl(180, 100%, 50%); }
+  67% { color: hsl(240, 100%, 50%); }
+  83% { color: hsl(300, 100%, 50%); }
+  100% { color: hsl(360, 100%, 50%); }
+}
+
+.vp-page .vp-card-grid .vp-link-card .link .text,
+.vp-page .vp-card-grid .vp-card-wrapper .title .text {
+  animation: team-rainbow 8s linear infinite;
+}
+
+.vp-page .vp-card-grid .vp-link-card:nth-child(2) .link .text,
+.vp-page .vp-card-grid .vp-card-wrapper:nth-child(2) .title .text {
+  animation-delay: -2s;
+}
+
+.vp-page .vp-card-grid .vp-link-card:nth-child(3) .link .text,
+.vp-page .vp-card-grid .vp-card-wrapper:nth-child(3) .title .text {
+  animation-delay: -4s;
+}
+
+.vp-page .vp-card-grid .vp-link-card:nth-child(4) .link .text,
+.vp-page .vp-card-grid .vp-card-wrapper:nth-child(4) .title .text {
+  animation-delay: -6s;
+}
+
+.vp-page .vp-card-grid .vp-card-wrapper {
+  background-color: transparent;
+}
+
+.vp-page .vp-card-grid .vp-card-wrapper:hover {
+  background-color: var(--vp-c-bg-soft);
+  border-color: var(--vp-c-brand-2);
+}
+
 /* friends */
 .vp-friends {
   max-width: 1400px !important;
