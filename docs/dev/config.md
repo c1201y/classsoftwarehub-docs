@@ -113,7 +113,9 @@ createTime: 2026/10/19 20:00:00
 | 常量 | 当前值 | 说明 |
 | --- | --- | --- |
 | `SiteUrl` | `https://classsoftwarehub.us.ci` | 站点地址（代码当前值；站点主域已切到 `classsoftwarehub.cn`，桌面端常量尚未跟进） |
-| `ShellVersion` | `1.2.0-insider1.2` | 版本号唯一来源 |
+| `ShellVersion` | `1.2.0` | 版本号唯一来源 |
+| `DisplayVersion` | `1.2.0`（预览版形如 `1.2.0-Pr1.11`） | 界面显示的版本号，由 `ShellVersion` 推导：`insider` 段替换为 `Pr`，正式版与 `ShellVersion` 相同 |
+| `DisplayTag` | `dv1.2.0` | 界面显示的完整标签，等于 `VersionPrefix + DisplayVersion` |
 | `VersionPrefix` | `dv` | 版本号前缀 |
 | `UpdateRepoOwner` / `UpdateRepoName` | `c1201y` / `ClassSoftwareHub-windows7` | 更新仓库 |
 | `SiteRepoOwner` / `SiteRepoName` / `SiteRepoBranch` | `c1201y` / `ClassSoftwareHub` / `main` | 软件数据来源仓库 |

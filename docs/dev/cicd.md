@@ -72,7 +72,7 @@ tag 含 `insider` 时自动标为 Pre-release，仅预览版通道客户端能�
 
 1. 检出源码（`fetch-depth: 0`，读 tag / 生成变更说明需完整历史）。
 2. 安装 .NET `6.0.x`。
-3. 确定版本号：优先 tag（`dv1.0.0` → `1.0.0`，兼容历史 `win7-` 前缀）→ 其次 `inputs.version` → 最后读 `src/Core/ShellConfig.cs` 的 `ShellVersion`。版本号含 `insider` 则通道为 `insider`，否则 `stable`。
+3. 确定版本号：优先 tag（`dv1.2.0` → `1.2.0`，兼容历史 `win7-` 前缀）→ 其次 `inputs.version` → 最后读 `src/Core/ShellConfig.cs` 的 `ShellVersion`。版本号含 `insider` 则通道为 `insider`，否则 `stable`。
 4. `dotnet publish` 应用本体（WinExe，不带 `CshConsoleBuild`）。
 5. `dotnet publish` 启动器。
 6. `tools/pack-win7-portable.ps1` 组装便携版并打 zip。
@@ -93,9 +93,9 @@ tag 含 `insider` 时自动标为 Pre-release，仅预览版通道客户端能�
 ```powershell
 $env:GITHUB_TOKEN = "..."     # 需要仓库写权限，不要写进任何文件
 node tools\publish-release-win7.mjs `
-  --version 1.0.0 --channel stable `
-  --installer "dist\installer\ClassSoftwareHub-Setup-win7-dv1.0.0.exe" `
-  --portable  "dist\ClassSoftwareHub-Portable-win7-dv1.0.0.zip" `
+  --version 1.2.0 --channel stable `
+  --installer "dist\installer\ClassSoftwareHub-Setup-win7-dv1.2.0.exe" `
+  --portable  "dist\ClassSoftwareHub-Portable-win7-dv1.2.0.zip" `
   --notes "dist\release\notes.md"
 ```
 
@@ -124,7 +124,7 @@ node tools\publish-release-win7.mjs `
 
 流程：做出一个能用的版本 → 发 `1.0.0-insider1.0` → 用户反馈还有问题 → 继续改成 `1.0.0-insider1.1` → 一直改到没问题 → 删掉 `-insider` 后缀 → 上线正式版 `1.0.0`。
 
-**Win10 版发版需四处一致**：`ShellVersion`、`.csproj` 的 `Version` / `InformationalVersion`、`.iss` 的 `DesktopVersion`、git tag（tag 带 `dv`，`.iss` 不带）。Win7 版三处一致：`ShellVersion`、`.iss` 的 `DesktopVersion`、git tag。
+**Win10 版发版需四处一致**：`ShellVersion`、`.csproj` 的 `Version` / `InformationalVersion`、`.iss` 的 `DesktopVersion`、git tag（tag 带 `dv`，`.iss` 不带）。**Win7 版发版需五处一致**：`ShellVersion`、`src/ClassSoftwareHub.Win7.csproj` 与 `src/Launcher/ClassSoftwareHub.Launcher.csproj` 的 `Version`（应用本体另有 `InformationalVersion`）、`.iss` 的 `DesktopVersion`、git tag。
 
 ::: warning 基数不随便抬
 否则旧包会被强制顶掉。

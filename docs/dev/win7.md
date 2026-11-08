@@ -142,7 +142,7 @@ Windows 7（含 `--simulate-win7`）**默认直接走软件渲染**，帧缓冲�
 ## 发布注意事项
 
 1. **版本号唯一来源**是 `src/Core/ShellConfig.cs` 的 `ShellVersion`，安装脚本的 `DesktopVersion` 必须与它一字不差（不带 `dv` 前缀）（`installer/ClassSoftwareHub-Win7.iss:23-26`）。
-2. **tag 命名**：正式版 `dv1.0.0`，预览版 `dv1.0.0-insider1.1`（带 `insider` 自动勾 Pre-release）。tag **不带任何前缀**（本仓库是 Win7 版自己的独立仓库，Release 列表天然隔离）。
+2. **tag 命名**：正式版 `dv1.2.0`，预览版 `dv1.2.0-insider1.11`（带 `insider` 自动勾 Pre-release）。tag **不带任何前缀**（本仓库是 Win7 版自己的独立仓库，Release 列表天然隔离）。
 3. **资产命名**：安装包名必须含 `Setup`（更新器据此认包）；便携包名必须含 `portable`（更新器据此跳过）。
 4. **`.md5` 必须上传**：否则客户端会因 `MissingChecksumException` 中止更新。
 5. **发版脚本与 tag 前缀联动**：`UpdateTagPrefix` 当前为空串，机制保留；若将来合库需填上前缀，**发版脚本里的 `TAG_PREFIX` 要同步改**（`BUILDING.md:106-107`）。

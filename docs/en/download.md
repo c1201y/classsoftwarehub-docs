@@ -33,10 +33,12 @@ The Desktop (Win10 / 11) edition ships an installer only. The two editions use d
 
 | Channel | Tag form | Notes |
 | --- | --- | --- |
-| Stable | `dv1.0.0` | Fully tested, recommended for daily use |
-| Insider | `dv1.0.0-insider1.1` | Early access to new features; published as a Pre-release |
+| Stable | `dv1.2.0` | Fully tested, recommended for daily use; published without the Pre-release flag |
+| Insider | `dv1.2.0-insider1.11` | Early access to new features; published as a Pre-release |
 
 The channel can be switched in the client settings. The stable channel receives non-prerelease versions only; the insider channel receives both prerelease and non-prerelease versions.
+
+After a stable release, the insider line restarts on top of it (`dv1.2.0` → the next `dv1.3.0-insider1.0`). Users who upgrade from an insider build to a stable release return to the stable sequence.
 
 ## System requirements
 
