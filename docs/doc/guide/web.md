@@ -10,7 +10,7 @@ createTime: 2026/10/19 20:00:00
 | 入口 | 地址 |
 | --- | --- |
 | 主站 | `https://classsoftwarehub.cn` |
-| 备用站点 | `https://classsoftwarehub.132614.xyz`|
+| 备用站点 | `https://classsoftwarehub.us.ci`|
 
 网页端为纯静态站点，**无需注册账号**即可浏览与下载。亦可以使用 `npm run build:single`命令，在本地生成约 2 MB 的单文件 HTML 供离线打开；线上部署使用的是多文件构建。
 
